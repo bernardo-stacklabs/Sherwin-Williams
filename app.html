@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>App · Convenção LATAM 2026</title>
+
+  <meta name="description" content="App da Convenção LATAM 2026 Sherwin-Williams." />
+  <meta name="theme-color" content="#f5a623" />
+  <link rel="apple-touch-icon" sizes="180x180" href="./icons/icon-192.svg" />
+
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="icon" type="image/svg+xml" href="./icons/icon-192.svg" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script>
+    // Define worker path for PDF.js
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  </script>
+
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+
+<body class="home-page">
+  <main class="app-shell">
+    <section class="app-card" aria-label="App Convenção LATAM 2026">
+      <header class="home-header">
+        <div class="home-header-main">
+          <div class="home-title-block">
+            <h1 class="home-title" data-i18n="homeTitle">Convenção LATAM</h1>
+            <p class="home-date" data-i18n="homeDate">11-14 de Março, 2026</p>
+          </div>
+          <div class="home-header-controls">
+            <button class="theme-toggle" type="button" aria-label="Alternar tema claro/escuro">
+              <span class="theme-toggle-icon" aria-hidden="true">
+                <i data-lucide="moon"></i>
+              </span>
+            </button>
+            <div class="lang-switcher" role="tablist" aria-label="Selecionar idioma">
+              <button class="lang-pill is-active" type="button" role="tab" aria-selected="true">PT</button>
+              <button class="lang-pill" type="button" role="tab" aria-selected="false">ES</button>
+              <button class="lang-pill" type="button" role="tab" aria-selected="false">EN</button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div class="content-container">
+        <section class="home-section" data-view="agenda">
+          <!-- Notices Section Moved Inside Agenda -->
+          <div class="notices-section">
+            <header class="section-header notices-header">
+              <h2 class="section-title" data-i18n="noticesTitle">Avisos Importantes</h2>
+              <button type="button" class="notices-toggle" aria-label="Expandir/Recolher avisos">
+                <i data-lucide="chevron-down"></i>
+              </button>
+            </header>
+            <div class="announcement-list" id="announcement-list"></div>
+          </div>
+
+          <header class="section-header">
+            <h2 class="section-title" data-i18n="agendaTitle">Agenda</h2>
+          </header>
+          <div class="day-tabs" role="tablist" aria-label="Selecionar dia da agenda">
+            <button class="day-pill is-active" type="button" role="tab" aria-selected="true" data-day="sunday"
+              data-i18n="sunday">
+              Domingo
+            </button>
+            <button class="day-pill" type="button" role="tab" aria-selected="false" data-day="monday"
+              data-i18n="monday">
+              Segunda
+            </button>
+            <button class="day-pill" type="button" role="tab" aria-selected="false" data-day="tuesday"
+              data-i18n="tuesday">
+              Terça
+            </button>
+            <button class="day-pill" type="button" role="tab" aria-selected="false" data-day="wednesday"
+              data-i18n="wednesday">
+              Quarta
+            </button>
+          </div>
+
+          <div class="schedule-list" id="schedule-list" aria-live="polite">
+            <!-- Conteúdo da agenda é preenchido via JavaScript para cada dia -->
+          </div>
+        </section>
+
+        <section class="home-section is-hidden" data-view="mapa">
+
+
+          <div class="map-viewer-container">
+            <div class="zoom-indicator">100%</div>
+            <div class="canvas-wrapper">
+              <canvas id="pdf-render"></canvas>
+            </div>
+            <div class="map-controls">
+              <button type="button" class="map-control-btn" id="zoom-in" aria-label="Zoom In">
+                <i data-lucide="zoom-in"></i>
+              </button>
+              <button type="button" class="map-control-btn" id="zoom-out" aria-label="Zoom Out">
+                <i data-lucide="zoom-out"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="locations-section">
+            <h3 class="section-subtitle" data-i18n="locationsTitle">Locais</h3>
+            <div class="locations-grid" id="locations-grid">
+              <!-- JS rendered cards -->
+            </div>
+          </div>
+        </section>
+
+        <section class="home-section is-hidden" data-view="fotos">
+
+          <div class="day-tabs photo-tabs" role="tablist" aria-label="Filtrar fotos por dia">
+            <button class="day-pill is-active" type="button" role="tab" data-photo-day="all" data-i18n="allPhotos">
+              Todos
+            </button>
+            <button class="day-pill" type="button" role="tab" data-photo-day="sunday" data-i18n="sunday">
+              Domingo
+            </button>
+            <button class="day-pill" type="button" role="tab" data-photo-day="monday" data-i18n="monday">
+              Segunda
+            </button>
+            <button class="day-pill" type="button" role="tab" data-photo-day="tuesday" data-i18n="tuesday">
+              Terça
+            </button>
+            <button class="day-pill" type="button" role="tab" data-photo-day="wednesday" data-i18n="wednesday">
+              Quarta
+            </button>
+          </div>
+
+          <div class="photos-grid" id="photos-grid">
+            <!-- JS Rendered Content -->
+          </div>
+        </section>
+        <nav class="bottom-nav" aria-label="Navegação principal do app">
+          <button class="bottom-nav-item is-active" type="button" data-view-target="agenda">
+            <span class="bottom-nav-icon" aria-hidden="true">
+              <i data-lucide="calendar"></i>
+            </span>
+            <span class="bottom-nav-label" data-i18n="navAgenda">Agenda</span>
+          </button>
+          <button class="bottom-nav-item" type="button" data-view-target="mapa">
+            <span class="bottom-nav-icon" aria-hidden="true">
+              <i data-lucide="map"></i>
+            </span>
+            <span class="bottom-nav-label" data-i18n="navMap">Mapa</span>
+          </button>
+          <button class="bottom-nav-item" type="button" data-view-target="fotos">
+            <span class="bottom-nav-icon" aria-hidden="true">
+              <i data-lucide="image"></i>
+            </span>
+            <span class="bottom-nav-label" data-i18n="navPhotos">Fotos</span>
+          </button>
+        </nav>
+    </section>
+
+    <dialog id="app-modal" class="modal app-modal">
+      <div class="modal-content">
+        <header class="modal-header">
+          <h3 id="modal-title" class="modal-title"></h3>
+          <button type="button" class="modal-close" aria-label="Fechar modal">
+            <i data-lucide="x"></i>
+          </button>
+        </header>
+        <div class="modal-body">
+          <div class="modal-info">
+            <p id="modal-time" class="modal-time"></p>
+            <p id="modal-location" class="modal-location"></p>
+          </div>
+          <p id="modal-description" class="modal-description"></p>
+        </div>
+        <div id="modal-actions" class="modal-actions"></div>
+      </div>
+    </dialog>
+  </main>
+
+  <script src="./app.js" type="module"></script>
+</body>
+
+</html>
