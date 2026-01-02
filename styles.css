@@ -86,8 +86,10 @@ html,
 body {
   margin: 0;
   padding: 0;
-  height: 100vh;
-  /* Force viewport height */
+  height: 100%;
+  height: -webkit-fill-available;
+  min-height: 100dvh;
+  /* Force viewport height dynamic */
   font-family: var(--font-sans);
   overflow: hidden;
   /* Prevent body scroll */
@@ -102,8 +104,10 @@ body {
 
 /* App Shell - The outer wrapper */
 .app-shell {
-  height: 100vh;
-  /* Full viewport height */
+  height: 100%;
+  height: -webkit-fill-available;
+  min-height: 100dvh;
+  /* Full viewport height dynamic */
   width: 100vw;
   display: flex;
   justify-content: center;
@@ -363,7 +367,8 @@ body {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  padding-bottom: 120px;
+  /* Account for taller mobile navbar with safe area */
+  padding-bottom: calc(130px + env(safe-area-inset-bottom, 0px));
 }
 
 .section-header {
@@ -681,7 +686,8 @@ body.dark-mode .session-status.session-status-next {
   left: 0;
   right: 0;
   width: 100%;
-  padding: 12px 24px 24px;
+  /* Respect Safe Area on modern mobile devices */
+  padding: 12px 24px calc(16px + env(safe-area-inset-bottom, 12px));
   display: flex;
   align-items: center;
   justify-content: space-around;
@@ -701,13 +707,13 @@ body.dark-mode .session-status.session-status-next {
   align-items: center;
   justify-content: center;
   gap: 6px;
-  padding: 8px;
+  padding: 10px 12px;
   border-radius: 12px;
   color: var(--color-text-muted);
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   font-weight: 500;
   cursor: pointer;
-  transition: color 0.2s;
+  transition: all 0.2s;
 }
 
 .bottom-nav-item.is-active {
@@ -717,10 +723,10 @@ body.dark-mode .session-status.session-status-next {
 }
 
 .bottom-nav-icon svg {
-  width: 24px;
-  height: 24px;
+  width: 26px;
+  height: 26px;
   stroke: currentColor;
-  stroke-width: 2;
+  stroke-width: 2.2;
   fill: none;
 }
 
