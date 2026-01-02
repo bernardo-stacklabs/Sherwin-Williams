@@ -267,10 +267,15 @@ function initHome() {
 
   // Theme Logic
   const savedTheme = localStorage.getItem('theme');
-  const isDark = savedTheme === 'dark';
+  const isDark = savedTheme === null || savedTheme === 'dark';
+
   if (isDark) {
     document.body.classList.add('dark-mode');
+  } else {
+    document.body.classList.remove('dark-mode');
   }
+
+  updateThemeIcon(); // Sync icon on load
 
   function updateThemeIcon() {
     const isDarkMode = document.body.classList.contains('dark-mode');

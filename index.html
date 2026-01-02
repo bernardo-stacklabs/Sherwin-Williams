@@ -26,7 +26,7 @@
     (function () {
       try {
         const savedTheme = localStorage.getItem('theme');
-        if (savedTheme === 'dark') {
+        if (savedTheme === null || savedTheme === 'dark') {
           document.body.classList.add('dark-mode');
         }
       } catch (e) { }
