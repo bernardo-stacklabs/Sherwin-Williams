@@ -134,24 +134,26 @@ body {
 }
 
 /* Login specific overrides */
+/* Login specific overrides */
 .app-card.login-mode {
-  padding: 48px 40px;
-  justify-content: center;
-  gap: 40px;
+  padding: 80px 24px 40px;
+  /* Reduced side padding for mobile to 24px */
+  justify-content: flex-start;
+  /* Aligns content to top instead of center */
+  gap: 24px;
   overflow-y: auto;
-  /* Login can scroll if needed */
+
+  /* New Full Screen Background Style */
+  background-image: url('./assets/backgrounds/login-bg.jpg');
+  background-size: cover;
+  background-position: center;
+  background-color: #1a1a1a;
+  border: none;
+  box-shadow: none;
 }
 
 /* Optional: Add a subtle decorative element for login to make it pop */
-.app-card.login-mode::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 6px;
-  background: var(--color-primary);
-}
+/* Removed previous pseudo-element as the background image handles the design */
 
 @media (min-width: 480px) {
   .app-card {
@@ -166,9 +168,15 @@ body {
   }
 
   /* Login behaves same as App on desktop: Full strip */
+  /* Login specific overrides for desktop - ensuring it respects the mobile card shape */
   .app-card.login-mode {
-    min-height: 100vh;
-    border-radius: 0;
+    /* Reset to mobile app width */
+    max-width: 480px;
+    width: 100%;
+    /* Restore borders to match app-card if they were unset by base login-mode */
+    border-left: 1px solid var(--color-nav-border);
+    border-right: 1px solid var(--color-nav-border);
+    /* Ensure it's centered */
     margin: 0 auto;
   }
 }
@@ -189,31 +197,66 @@ body {
   overscroll-behavior-y: contain;
 }
 
+/* Login specific text overrides */
+.login-mode .login-subtitle-muted,
+.login-mode .helper-text {
+  color: #cccccc;
+}
+
+.login-mode label {
+  color: #e0e0e0;
+}
+
+/* Style inputs for dark background */
+.login-mode .field-with-icon {
+  background: rgba(30, 30, 30, 0.6);
+  border-color: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(4px);
+}
+
+.login-mode .field-with-icon input {
+  color: #ffffff;
+}
+
+.login-mode .field-with-icon input::placeholder {
+  color: #888888;
+}
+
+.login-mode .field-icon svg {
+  fill: #aaaaaa;
+}
+
+.login-mode .primary-button {
+  background: linear-gradient(90deg, #ffb700 0%, #e68a00 100%);
+  color: #000000;
+  font-weight: 700;
+  border: none;
+}
+
+.login-mode .link-button {
+  color: #ffb700;
+}
+
+/* Footer copyright */
+.login-footer {
+  margin-top: auto;
+  /* Pushes footer to the bottom */
+  width: 100%;
+  text-align: center;
+  padding-bottom: 24px;
+  /* Ensure safe distance from bottom edge */
+}
+
+.login-footer small {
+  color: #666;
+}
+
 .login-header {
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 32px;
-}
-
-.brand-mark {
-  width: 72px;
-  height: 72px;
-  border-radius: 24px;
-  background: linear-gradient(145deg, #ffcf4a, #f5a623);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-size: 1.4rem;
-  color: #3a250c;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
-}
-
-.login-title-group h1 {
-  font-size: 1.55rem;
-  margin: 0 0 4px;
+  gap: 24px;
 }
 
 /* Home (in-app) header */
@@ -751,6 +794,10 @@ body.dark-mode .session-status.session-status-next {
   display: flex;
   flex-direction: column;
   gap: 24px;
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  /* Center the form */
 }
 
 #reset-form {
