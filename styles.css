@@ -184,17 +184,12 @@ body {
 /* Scrollable Content Area */
 /* Scrollable Content Area */
 .content-container {
-  flex: 1;
-  /* Grow to fill available space */
+  flex: 1 0 auto;
+  /* Conteúdo cresce normalmente e deixa o scroll para o body */
   display: flex;
   flex-direction: column;
   padding: 24px 24px 0;
-  overflow-y: auto;
-  /* Ensure scrolling happens here */
-  height: auto;
-  min-height: 0;
-  /* Crucial for flex nested scrolling */
-  overscroll-behavior-y: contain;
+  overflow-y: visible;
 }
 
 /* Login specific text overrides */
@@ -211,6 +206,7 @@ body {
 .login-mode .field-with-icon {
   background: rgba(30, 30, 30, 0.6);
   border-color: rgba(255, 255, 255, 0.2);
+  -webkit-backdrop-filter: blur(4px);
   backdrop-filter: blur(4px);
 }
 
@@ -304,6 +300,18 @@ body {
   display: flex;
   flex-direction: column;
   gap: 4px;
+}
+
+.home-logo-wrapper {
+  height: 64px;
+  display: flex;
+  align-items: center;
+}
+
+.home-logo {
+  max-height: 64px;
+  max-width: 180px;
+  display: block;
 }
 
 .home-title {
@@ -545,7 +553,10 @@ body.dark-mode .announcement-card {
   scrollbar-width: none;
   -ms-overflow-style: none;
   cursor: grab;
+  -webkit-user-select: none;
+  -ms-user-select: none;
   user-select: none;
+  /* Horizontal scroll via native overflow; touch-action removed for wider iOS support */
 }
 
 .day-tabs:active {
@@ -1033,7 +1044,7 @@ body.dark-mode .session-status.session-status-next {
 
 @media (min-width: 768px) {
   .app-shell {
-    padding: 40px 24px;
+    padding: 0px;
   }
 
   .login-card {
@@ -1057,10 +1068,11 @@ body.dark-mode .session-status.session-status-next {
   align-items: flex-end;
   /* Bottom sheet */
   justify-content: center;
+  -webkit-backdrop-filter: blur(4px);
   backdrop-filter: blur(4px);
   background-color: rgba(0, 0, 0, 0.6);
   opacity: 0;
-  transition: opacity 0.3s allow-discrete;
+  transition: opacity 0.3s ease;
 }
 
 .app-modal[open] {
@@ -1207,9 +1219,10 @@ body.dark-mode .session-status.session-status-next {
   overflow: auto;
   width: 100%;
   height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  /* Mantém o canvas ancorado no canto superior esquerdo
+     para que o cálculo de scroll (focusLocation) funcione
+     corretamente e o topo do mapa fique acessível */
+  display: block;
 }
 
 .zoom-indicator {
@@ -1223,6 +1236,7 @@ body.dark-mode .session-status.session-status-next {
   font-size: 0.85rem;
   font-weight: 700;
   z-index: 10;
+  -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
   border: 1px solid var(--color-nav-border);
   box-shadow: var(--shadow-card);
@@ -1397,6 +1411,19 @@ body.dark-mode .session-status.session-status-next {
   font-size: 0.8rem;
 }
 
+.photo-image-wrapper {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.photo-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
 .photo-download-btn {
   position: absolute;
   bottom: 8px;
@@ -1411,6 +1438,7 @@ body.dark-mode .session-status.session-status-next {
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  -webkit-backdrop-filter: blur(4px);
   backdrop-filter: blur(4px);
   transition: all 0.2s;
   opacity: 0.8;

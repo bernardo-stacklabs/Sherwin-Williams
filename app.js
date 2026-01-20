@@ -363,96 +363,295 @@ function initHome() {
   ];
 
   const agendaByDay = {
+    // DOM 25/01 - chegada liderança
     sunday: [
       {
-        id: 101, // New Breakfast
-        time: '07:30 - 09:30',
-        titleKey: 'sessionBreakfast',
-        locationKey: 'locRest',
-        status: null,
-      },
-      {
         id: 1,
-        time: '10:00 - 11:00', // Finished
+        time: 'ALL DAY',
         titleKey: 'session1Title',
-        locationKey: 'session1Loc',
+        locationKey: 'locTbd',
         status: null,
       },
-      {
-        id: 2,
-        time: '11:00 - 13:00', // Now
-        titleKey: 'session2Title',
-        locationKey: 'session2Loc',
-        status: null,
-        isFavorite: true,
-      },
-      {
-        id: 99,
-        time: '12:15 - 13:15',
-        titleKey: 'session3Title',
-        locationKey: 'session1Loc',
-        status: null,
-      },
-      {
-        id: 102, // New Check-in
-        time: '14:00 - 18:00',
-        titleKey: 'sessionCheckin',
-        locationKey: 'session1Loc',
-        status: null,
-      }
     ],
+    // SEG 26/01
     monday: [
       {
+        id: 2,
+        time: '09:00 - 19:00',
+        titleKey: 'session2Title',
+        locationKey: 'locTbd',
+        status: null,
+      },
+      {
         id: 3,
-        time: '09:00 - 10:30',
+        time: '08:30 - 17:00',
         titleKey: 'session3Title',
-        locationKey: 'session1Loc',
+        locationKey: 'locTbd',
         status: null,
       },
       {
         id: 4,
-        time: '11:00 - 12:30',
+        time: '08:30 - 09:00',
         titleKey: 'session4Title',
-        locationKey: 'session1Loc',
+        locationKey: 'locTbd',
         status: null,
       },
-      {
-        id: 103, // New Lunch
-        time: '12:30 - 14:00',
-        titleKey: 'sessionLunch',
-        locationKey: 'locRest',
-        status: null,
-      },
-      {
-        id: 104, // New Happy Hour
-        time: '18:00 - 20:00',
-        titleKey: 'sessionHappyHour',
-        locationKey: 'session2Loc',
-        status: null,
-      }
-    ],
-    tuesday: [
       {
         id: 5,
-        time: '09:30 - 11:00',
+        time: '09:00 - 10:00',
         titleKey: 'session5Title',
-        locationKey: 'session5Loc',
+        locationKey: 'locTbd',
         status: null,
       },
       {
         id: 6,
-        time: '19:30 - 22:00',
+        time: '10:00 - 10:30',
         titleKey: 'session6Title',
-        locationKey: 'session2Loc',
+        locationKey: 'locTbd',
+        status: null,
+      },
+      {
+        id: 7,
+        time: '10:30 - 11:30',
+        titleKey: 'session7Title',
+        locationKey: 'locTbd',
+        status: null,
+      },
+      {
+        id: 8,
+        time: '11:30 - 12:30',
+        titleKey: 'session8Title',
+        locationKey: 'locTbd',
+        status: null,
+      },
+      {
+        id: 9,
+        time: '12:30 - 13:30',
+        titleKey: 'session9Title',
+        locationKey: 'locTbd',
+        status: null,
+      },
+      {
+        id: 10,
+        time: '13:30 - 14:00',
+        titleKey: 'session10Title',
+        locationKey: 'locTbd',
+        status: null,
+      },
+      {
+        id: 11,
+        time: '14:00 - 14:30',
+        titleKey: 'session11Title',
+        locationKey: 'locTbd',
+        status: null,
+      },
+      {
+        id: 12,
+        time: '14:30 - 15:00',
+        titleKey: 'session12Title',
+        locationKey: 'locTbd',
+        status: null,
+      },
+      {
+        id: 13,
+        time: '15:00 - 15:30',
+        titleKey: 'session13Title',
+        locationKey: 'locTbd',
+        status: null,
+      },
+      {
+        id: 14,
+        time: '15:30 - 16:00',
+        titleKey: 'session14Title',
+        locationKey: 'locTbd',
+        status: null,
+      },
+      {
+        id: 15,
+        time: '16:00 - 17:00',
+        titleKey: 'session15Title',
+        locationKey: 'locTbd',
+        status: null,
+      },
+      {
+        id: 16,
+        time: '20:00 - 22:00',
+        titleKey: 'session16Title',
+        locationKey: 'locTbd',
         status: null,
       },
     ],
+    // TER 27/01
+    tuesday: [
+      {
+        id: 17,
+        time: '08:30 - 09:00',
+        titleKey: 'session17Title',
+        locationKey: 'locTbd',
+        status: null,
+      },
+      {
+        id: 18,
+        time: '09:00 - 10:00',
+        titleKey: 'session18Title',
+        locationKey: 'locTbd',
+        status: null,
+      },
+      {
+        id: 19,
+        time: '10:00 - 10:30',
+        titleKey: 'session19Title',
+        locationKey: 'locTbd',
+        status: null,
+      },
+      {
+        id: 20,
+        time: '10:30 - 11:30',
+        titleKey: 'session20Title',
+        locationKey: 'locTbd',
+        status: null,
+      },
+      {
+        id: 21,
+        time: '11:30 - 13:00',
+        titleKey: 'session21Title',
+        locationKey: 'locTbd',
+        status: null,
+      },
+      {
+        id: 22,
+        time: '13:00 - 14:00',
+        titleKey: 'session22Title',
+        locationKey: 'locTbd',
+        status: null,
+      },
+      {
+        id: 23,
+        time: '14:00 - 14:30',
+        titleKey: 'session23Title',
+        locationKey: 'locTbd',
+        status: null,
+      },
+      {
+        id: 24,
+        time: '14:30 - 15:00',
+        titleKey: 'session24Title',
+        locationKey: 'locTbd',
+        status: null,
+      },
+      {
+        id: 25,
+        time: '15:00 - 15:30',
+        titleKey: 'session25Title',
+        locationKey: 'locTbd',
+        status: null,
+      },
+      {
+        id: 26,
+        time: '15:30 - 16:00',
+        titleKey: 'session26Title',
+        locationKey: 'locTbd',
+        status: null,
+      },
+      {
+        id: 27,
+        time: '16:00 - 16:30',
+        titleKey: 'session27Title',
+        locationKey: 'locTbd',
+        status: null,
+      },
+      {
+        id: 28,
+        time: '16:30 - 17:30',
+        titleKey: 'session28Title',
+        locationKey: 'locTbd',
+        status: null,
+      },
+      {
+        id: 29,
+        time: '17:30 - 17:40',
+        titleKey: 'session29Title',
+        locationKey: 'locTbd',
+        status: null,
+      },
+      {
+        id: 30,
+        time: '18:30 - 22:00',
+        titleKey: 'session30Title',
+        locationKey: 'locTbd',
+        status: null,
+      },
+    ],
+    // QUA 28/01 (e saída em 29/01 agrupada aqui)
     wednesday: [
       {
-        id: 7,
-        time: '10:00 - 12:00',
-        titleKey: 'session7Title',
-        locationKey: 'session1Loc',
+        id: 31,
+        time: '08:30 - 09:00',
+        titleKey: 'session31Title',
+        locationKey: 'locTbd',
+        status: null,
+      },
+      {
+        id: 32,
+        time: '09:00 - 10:30',
+        titleKey: 'session32Title',
+        locationKey: 'locTbd',
+        status: null,
+      },
+      {
+        id: 33,
+        time: '10:30 - 11:00',
+        titleKey: 'session33Title',
+        locationKey: 'locTbd',
+        status: null,
+      },
+      {
+        id: 34,
+        time: '11:30 - 12:00',
+        titleKey: 'session34Title',
+        locationKey: 'locTbd',
+        status: null,
+      },
+      {
+        id: 35,
+        time: '12:00 - 13:00',
+        titleKey: 'session35Title',
+        locationKey: 'locTbd',
+        status: null,
+      },
+      {
+        id: 36,
+        time: '13:00 - 14:00',
+        titleKey: 'session36Title',
+        locationKey: 'locTbd',
+        status: null,
+      },
+      {
+        id: 37,
+        time: '13:00 - 14:00',
+        titleKey: 'session37Title',
+        locationKey: 'locTbd',
+        status: null,
+      },
+      {
+        id: 38,
+        time: '14:00 - 17:00',
+        titleKey: 'session38Title',
+        locationKey: 'locTbd',
+        status: null,
+      },
+      {
+        id: 39,
+        time: '17:30 - 19:00',
+        titleKey: 'session39Title',
+        locationKey: 'locTbd',
+        status: null,
+      },
+      {
+        id: 40,
+        time: 'ALL DAY',
+        titleKey: 'session40Title',
+        locationKey: 'locTbd',
         status: null,
       },
     ],
@@ -542,49 +741,75 @@ function initHome() {
 
 
   function getSessionStatus(timeStr, dayKey) {
-    // dayKey: 'sunday', 'monday', etc.
-    // timeStr: "14:00 - 18:00"
+    // Status baseado na DATA real do evento, não só no dia da semana.
+    // dayKey: 'sunday', 'monday', etc. mapeados para as datas oficiais da convenção.
+
+    const EVENT_YEAR = 2026;
+    const EVENT_MONTH_INDEX = 0; // Janeiro = 0 no JS
+    const dayOfMonthMap = {
+      sunday: 25,   // DOM 25/01
+      monday: 26,   // SEG 26/01
+      tuesday: 27,  // TER 27/01
+      wednesday: 28 // QUA 28/01 (agrupando também a saída de 29/01)
+    };
+
+    const dayOfMonth = dayOfMonthMap[dayKey];
+    if (!dayOfMonth) return null;
 
     const now = new Date();
-    // Helper to get today's day index for testing "Sunday" as "Today"
-    // We map 'sunday' to proper Today index so it shows active tags
-    // Other days will mismatch and show no tags, proving the fix
-    const todayIndex = now.getDay();
 
-    // Map 'sunday' (0), 'monday' (1), etc.
-    // MODIFIED FOR TESTING: sunday = todayIndex
-    const daysMap = { sunday: todayIndex, monday: 1, tuesday: 2, wednesday: 3, thursday: 4, friday: 5, saturday: 6 };
-    const targetDay = daysMap[dayKey];
+    // Datas normalizadas (sem horas) para comparação de dia
+    const todayDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const eventDate = new Date(EVENT_YEAR, EVENT_MONTH_INDEX, dayOfMonth);
 
-    // Check if right day
-    if (now.getDay() !== targetDay) return null;
+    // Se hoje for depois do dia do evento, tudo desse dia está "concluído"
+    if (todayDate > eventDate) {
+      return 'finished';
+    }
 
-    // Parse times
+    // Se hoje ainda não chegou nesse dia, não mostra status
+    if (todayDate < eventDate) {
+      return null;
+    }
+
+    // A partir daqui: hoje é exatamente o dia do evento correspondente ao tab.
+
+    // Sessão de dia inteiro
+    if (timeStr === 'ALL DAY') {
+      return 'now';
+    }
+
+    // Parse de horários "HH:MM - HH:MM"
     const [startStr, endStr] = timeStr.split(' - ');
     if (!startStr) return null;
 
-    const [startH, startM] = startStr.split(':').map(Number);
-    const [endH, endM] = endStr ? endStr.split(':').map(Number) : [startH + 1, startM]; // Default 1h if no end
+    const normalizeTime = (str) => {
+      // Aceita "9h00" ou "09:00" e converte para números
+      const clean = str.replace('h', ':');
+      const [h, m] = clean.split(':');
+      return [Number(h), Number(m || 0)];
+    };
 
-    const currentH = now.getHours();
-    const currentM = now.getMinutes();
-    const currentMins = currentH * 60 + currentM;
+    const [startH, startM] = normalizeTime(startStr);
+    const [endH, endM] = endStr ? normalizeTime(endStr) : [startH + 1, startM];
 
     const startMins = startH * 60 + startM;
     const endMins = endH * 60 + endM;
 
-    // "Finished": End time has passed
+    const currentMins = now.getHours() * 60 + now.getMinutes();
+
+    // "Finished": horário final já passou hoje
     if (currentMins >= endMins) {
       return 'finished';
     }
 
-    // "Now": Current time is between start and end
+    // "Now": dentro da janela da sessão
     if (currentMins >= startMins && currentMins < endMins) {
       return 'now';
     }
 
-    // "Next": Starts within the next 120 mins (2 hours)
-    if (startMins > currentMins && startMins - currentMins <= 120) {
+    // "Next": começa nas próximas 2 horas (120 min)
+    if (startMins > currentMins && (startMins - currentMins) <= 120) {
       return 'next';
     }
 
@@ -654,11 +879,69 @@ function initHome() {
 
   // --- MAP LOGIC ---
   const locationsData = [
-    { titleKey: 'locPlenary', descKey: 'locPlenaryDesc', icon: 'mic-2' },
-    { titleKey: 'locRoom1', descKey: 'locRoom1Desc', icon: 'presentation' },
-    { titleKey: 'locRoom2', descKey: 'locRoom2Desc', icon: 'presentation' },
-    { titleKey: 'locRest', descKey: 'locRestDesc', icon: 'utensils' },
+    // Parte superior do mapa (Plenária / Restaurante)
+    { titleKey: 'locPlenary', descKey: 'locPlenaryDesc', icon: 'mic-2', x: 0, y: 0 },
+    { titleKey: 'locRest', descKey: 'locRestDesc', icon: 'utensils', x: 0, y: 0 },
+    // Parte central/abaixo (Check-in / Guarda-volumes / Chegada / Welcome Drink)
+    { titleKey: 'locCheckin', descKey: 'locCheckinDesc', icon: 'user-check', x: 1, y: 0.50 },
+    { titleKey: 'locLuggage', descKey: 'locLuggageDesc', icon: 'briefcase', x: 1, y: 0.70 },
+    { titleKey: 'locArrival', descKey: 'locArrivalDesc', icon: 'map-pin', x: 1, y: 0.65 },
+    { titleKey: 'locWelcome', descKey: 'locWelcomeDesc', icon: 'glass-water', x: 1, y: 0.70 },
   ];
+
+  // Map Vars
+  let mapImage = new Image();
+  let mapLoaded = false;
+  let scale = 0.4; // 40% padrão
+  const BASE_ZOOM = 0.4;
+  const MIN_ZOOM = 0.4; // mínimo 40%
+  const MAX_ZOOM = 1.0; // não ultrapassar 100%
+  const ZOOM_STEP = 0.05; // 5%
+
+  const canvas = document.querySelector('#pdf-render');
+  const ctx = canvas?.getContext('2d');
+  const canvasWrapper = document.querySelector('.canvas-wrapper');
+  const zoomIndicator = document.querySelector('.zoom-indicator');
+
+  function renderMap() {
+    if (!ctx || !mapLoaded) return;
+
+    // Set canvas dimensions based on scale
+    canvas.width = mapImage.width * scale;
+    canvas.height = mapImage.height * scale;
+
+    // Draw image
+    ctx.drawImage(mapImage, 0, 0, canvas.width, canvas.height);
+
+    if (zoomIndicator) {
+      zoomIndicator.textContent = `${Math.round(scale * 100)}%`;
+    }
+  }
+
+  function focusLocation(loc) {
+    if (!mapLoaded || !canvasWrapper) return;
+    // Sempre usar 40% ao focar qualquer local
+    scale = BASE_ZOOM;
+    renderMap();
+
+    // Scroll to center the location
+    // loc.x, loc.y are normalized 0-1
+    const targetX = loc.x * canvas.width;
+    const targetY = loc.y * canvas.height;
+
+    const wrapperW = canvasWrapper.clientWidth;
+    const wrapperH = canvasWrapper.clientHeight;
+
+    // Scroll coordinates
+    const scrollX = targetX - (wrapperW / 2);
+    const scrollY = targetY - (wrapperH / 2);
+
+    canvasWrapper.scrollTo({
+      left: scrollX,
+      top: scrollY,
+      behavior: 'smooth'
+    });
+  }
 
   function renderLocations() {
     const locationsGrid = document.querySelector('#locations-grid');
@@ -677,68 +960,39 @@ function initHome() {
           <p>${t(loc.descKey)}</p>
         </div>
       `;
+
+      // Click to zoom
+      card.addEventListener('click', () => {
+        focusLocation(loc);
+
+        // Scroll map into view if needed (mobile UX)
+        // document.querySelector('.map-viewer-container').scrollIntoView({ behavior: 'smooth' });
+      });
+
       locationsGrid.appendChild(card);
     });
     refreshIcons();
   }
 
-  // PDF Viewer Vars
-  let pdfDoc = null;
-  let pageNum = 1;
-  let scale = 1.0;
-  const canvas = document.querySelector('#pdf-render');
-  const ctx = canvas?.getContext('2d');
-  const zoomIndicator = document.querySelector('.zoom-indicator');
+  function loadMapImage() {
+    mapImage.src = './assets/mapa-evento.png';
+    mapImage.onload = () => {
+      mapLoaded = true;
 
-  function renderPage(num) {
-    if (!pdfDoc || !canvas) return;
+      // Zoom inicial fixo em 40%, respeitando limites
+      scale = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, BASE_ZOOM));
+      renderMap();
 
-    pdfDoc.getPage(num).then(page => {
-      const viewport = page.getViewport({ scale });
-      canvas.height = viewport.height;
-      canvas.width = viewport.width;
+      // Começa mostrando o topo centralizado horizontalmente
+      if (canvasWrapper) {
+        canvasWrapper.scrollTop = 0;
+        canvasWrapper.scrollLeft = (canvas.width - canvasWrapper.clientWidth) / 2;
+      }
+    };
 
-      const renderContext = {
-        canvasContext: ctx,
-        viewport: viewport
-      };
-
-      const renderTask = page.render(renderContext);
-      // Wait for render to finish
-      renderTask.promise.then(function () {
-        if (zoomIndicator) {
-          zoomIndicator.textContent = `${Math.round(scale * 100)}%`;
-        }
-      });
-
-    }).catch(err => {
-      console.error("Error rendering page: ", err);
-    });
-  }
-
-  function queueRenderPage(num) {
-    renderPage(num);
-  }
-
-  function loadMapPdf() {
-    if (!canvas) return; // Not on page
-    const url = './assets/map.pdf'; // Placeholder path
-
-    // If PDF.js is loaded
-    if (window.pdfjsLib) {
-      pdfjsLib.getDocument(url).promise.then(pdf => {
-        pdfDoc = pdf;
-        renderPage(pageNum);
-      }).catch(err => {
-        console.warn("Map PDF not found or error loading:", err);
-        // Optional: Draw text on canvas saying "Map not available"
-        if (ctx) {
-          ctx.font = "14px Inter";
-          ctx.fillStyle = "#666";
-          ctx.fillText("PDF não encontrado (./assets/map.pdf)", 20, 50);
-        }
-      });
-    }
+    mapImage.onerror = () => {
+      console.error("Erro ao carregar imagem do mapa.");
+    };
   }
 
   // Map Controls
@@ -747,21 +1001,21 @@ function initHome() {
 
   if (zoomInBtn) {
     zoomInBtn.addEventListener('click', () => {
-      scale += 0.2;
-      queueRenderPage(pageNum);
+      scale = Math.min(MAX_ZOOM, scale + ZOOM_STEP);
+      renderMap();
     });
   }
 
   if (zoomOutBtn) {
     zoomOutBtn.addEventListener('click', () => {
-      if (scale <= 0.4) return;
-      scale -= 0.2;
-      queueRenderPage(pageNum);
+      if (scale <= MIN_ZOOM) return;
+      scale = Math.max(MIN_ZOOM, scale - ZOOM_STEP);
+      renderMap();
     });
   }
 
   renderLocations();
-  loadMapPdf(); // Try loading PDF logic
+  loadMapImage();
 
   renderNotices();
 
@@ -784,15 +1038,23 @@ function initHome() {
   // Navegação inferior (Agenda / Mapa / Fotos)
   // --- PHOTOS LOGIC ---
   const photosData = [
-    { id: 1, day: 'sunday', url: null },
-    { id: 2, day: 'sunday', url: null },
-    { id: 3, day: 'monday', url: null },
-    { id: 4, day: 'monday', url: null },
-    { id: 5, day: 'monday', url: null },
-    { id: 6, day: 'tuesday', url: null },
-    { id: 7, day: 'tuesday', url: null },
-    { id: 8, day: 'wednesday', url: null },
-    { id: 9, day: 'wednesday', url: null },
+    // Para ativar as fotos reais, basta apontar as URLs
+    // para arquivos estáticos em ./assets/photos
+    // Exemplo sugerido de nomes de arquivo:
+    //  ./assets/photos/domingo-01.jpg
+    //  ./assets/photos/segunda-01.jpg
+    //  ./assets/photos/terca-01.jpg
+    //  ./assets/photos/quarta-01.jpg
+    // Enquanto url for null, a aba exibirá apenas o texto "em breve".
+    { id: 1, day: 'sunday', url: null },   // ./assets/photos/domingo-01.jpg
+    { id: 2, day: 'sunday', url: null },   // ./assets/photos/domingo-02.jpg
+    { id: 3, day: 'monday', url: null },   // ./assets/photos/segunda-01.jpg
+    { id: 4, day: 'monday', url: null },   // ./assets/photos/segunda-02.jpg
+    { id: 5, day: 'monday', url: null },   // ./assets/photos/segunda-03.jpg
+    { id: 6, day: 'tuesday', url: null },  // ./assets/photos/terca-01.jpg
+    { id: 7, day: 'tuesday', url: null },  // ./assets/photos/terca-02.jpg
+    { id: 8, day: 'wednesday', url: null },// ./assets/photos/quarta-01.jpg
+    { id: 9, day: 'wednesday', url: null },// ./assets/photos/quarta-02.jpg
   ];
 
   function renderPhotos(filterDay = 'all') {
@@ -804,31 +1066,36 @@ function initHome() {
       ? photosData
       : photosData.filter(p => p.day === filterDay);
 
-    if (filtered.length === 0) {
-      photosGrid.innerHTML = '<p class="empty-state" style="grid-column: 1/-1;">Nenhuma foto encontrada.</p>';
+    // Se não houver nenhuma foto cadastrada (url preenchida) para o filtro atual,
+    // exibir mensagem "em breve" usando o texto de i18n.
+    const photosWithUrl = filtered.filter(p => !!p.url);
+
+    if (photosWithUrl.length === 0) {
+      photosGrid.innerHTML = `<p class="empty-state" style="grid-column: 1/-1;">${t('photosPlaceholder')}</p>`;
       return;
     }
 
-    filtered.forEach(photo => {
+    photosWithUrl.forEach(photo => {
       const card = document.createElement('div');
       card.className = 'photo-card';
-      // Placeholder structure
+      // Quando houver URL, usamos a foto real como background do card
       card.innerHTML = `
-        <div class="photo-placeholder">
-          Foto ${photo.id}
+        <div class="photo-image-wrapper">
+          <img src="${photo.url}" alt="Foto ${photo.id}" class="photo-image" loading="lazy" />
         </div>
         <button type="button" class="photo-download-btn" aria-label="${t('download')}">
           <i data-lucide="download"></i>
         </button>
       `;
 
-      // Mock Download
+      // Download da foto real
       const btn = card.querySelector('.photo-download-btn');
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
         const link = document.createElement('a');
-        link.href = 'data:text/plain;charset=utf-8,Foto%20Placeholder%20' + photo.id;
-        link.download = `photo-${photo.id}.txt`; // Dummy download
+        link.href = photo.url;
+        // Sugere um nome de arquivo simples baseado no id
+        link.download = `photo-${photo.id}`;
         link.click();
       });
 
