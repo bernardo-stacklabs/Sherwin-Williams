@@ -255,6 +255,13 @@ body {
   gap: 24px;
 }
 
+.login-logo-container img {
+  width: 100%;
+  max-width: 550px;
+  height: auto;
+  display: block;
+}
+
 /* Home (in-app) header */
 /* Home (in-app) header */
 /* Home (in-app) header */
