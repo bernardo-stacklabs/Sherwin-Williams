@@ -241,11 +241,17 @@ resetForm?.addEventListener('submit', async (event) => {
 });
 
 if ('serviceWorker' in navigator) {
-  // Unregister existing service workers to ensure code updates are seen immediately
-  navigator.serviceWorker.getRegistrations().then(function (registrations) {
-    for (let registration of registrations) {
-      registration.unregister();
-    }
+  // Register Service Worker (PWA offline + installability)
+  window.addEventListener('load', () => {
+    navigator.serviceWorker
+      .register('./sw.js')
+      .then((registration) => {
+        // Trigger update check in the background
+        registration.update().catch(() => { });
+      })
+      .catch((error) => {
+        console.warn('Service Worker registration failed:', error);
+      });
   });
 }
 
