@@ -78,7 +78,13 @@ async function getSupabaseClient() {
   }
 
   // ESM build oficial via CDN (funciona direto no browser)
-  const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm');
+  // UMD loaded via <script> in index.html exposes 'supabase' global
+  if (!window.supabase) {
+    console.error('Supabase SDK not loaded via script tag');
+    alert('Erro: A biblioteca do Supabase não foi carregada. Verifique sua conexão ou se bloqueadores de anúncios estão ativos.');
+    throw new Error('Supabase SDK not loaded');
+  }
+  const { createClient } = window.supabase;
   supabaseClient = createClient(supabaseConfig.url, supabaseConfig.anonKey);
   return supabaseClient;
 }
@@ -258,8 +264,8 @@ function initHome() {
   };
   refreshIcons();
 
-  const appCard = document.querySelector('.app-card');
-  if (!appCard) return; // não estamos na home do app
+  const isHomePage = document.body.classList.contains('home-page');
+  if (!isHomePage) return; // Only run home logic if body has home-page class
 
   // Header da home (tema e idioma)
   const themeToggle = document.querySelector('.theme-toggle');
@@ -315,6 +321,19 @@ function initHome() {
     // Re-render dynamic content (Notices & Agenda)
     renderNotices();
     renderSchedule(activeDay);
+
+    // Re-render Networking if it exists (using current search term if any)
+    if (typeof renderNetworking === 'function' && typeof participants !== 'undefined') {
+      const searchInput = document.querySelector('#networking-search');
+      const term = searchInput ? searchInput.value.toLowerCase() : '';
+      const filtered = term
+        ? participants.filter(p =>
+          p.name.toLowerCase().includes(term) ||
+          p.location.toLowerCase().includes(term) ||
+          p.department.toLowerCase().includes(term))
+        : participants;
+      renderNetworking(filtered);
+    }
   }
 
   langPills.forEach(pill => {
@@ -659,6 +678,161 @@ function initHome() {
 
   const noticesContainer = document.querySelector('#announcement-list');
 
+  // --- NETWORKING LOGIC ---
+  const networkingList = document.querySelector('#networking-list');
+  const networkingSearch = document.querySelector('#networking-search');
+  const networkingCounter = document.querySelector('#networking-counter');
+
+  let participants = []; // Dynamic list
+
+  async function fetchParticipants() {
+    if (!networkingList) return;
+
+    // Show skeleton or loading state if desired (omitted for brevity)
+
+    try {
+      const client = await getSupabaseClient();
+
+      // Attempt to select columns. If they don't exist, this might error.
+      // We select simple cols first. If user hasn't added photo_url/role, this query might fail 
+      // if we explicitly ask for them and they don't exist.
+      // However, Supabase PostgREST tolerates selecting non-existent columns sometimes? No, it errors 400.
+
+      // SAFE STRATEGY: Select * (all) and map fields manually
+      const { data, error } = await client
+        .from('users')
+        .select('*');
+
+      if (error) {
+        console.error('Error fetching participants:', error);
+        return;
+      }
+
+      // Map DB fields to App structure
+      participants = data.map(u => {
+        // Handle name combination
+        const fullName = [u.name, u.last_name].filter(Boolean).join(' ') || u.email.split('@')[0];
+
+        // Handle location combination
+        const locArgs = [u.city, u.country].filter(Boolean);
+        const locationStr = locArgs.length > 0 ? locArgs.join(', ') : 'LATAM';
+
+        return {
+          id: u.id,
+          name: fullName,
+          role: u.role || 'Participante', // Column not yet in DB, default value
+          department: u.department || 'Sherwin-Williams', // Column not yet in DB, default value
+          location: locationStr,
+          email: u.email,
+          linkedin: '',
+          initials: getInitials(fullName),
+          photo_url: u.photo_url || null // Will be null until column added
+        };
+      });
+
+      // Sort alpha
+      participants.sort((a, b) => a.name.localeCompare(b.name));
+
+      renderNetworking(participants);
+
+    } catch (err) {
+      console.error('Networking Load Error:', err);
+    }
+  }
+
+  function getInitials(name) {
+    if (!name) return 'SW';
+    const parts = name.split(' ');
+    if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+  }
+
+
+  // Helper: Toast Notification
+  function showToast(message) {
+    let toast = document.querySelector('.toast-notification');
+    if (!toast) {
+      toast = document.createElement('div');
+      toast.className = 'toast-notification';
+      document.body.appendChild(toast);
+    }
+    toast.textContent = message;
+    toast.classList.add('show');
+
+    // Hide after 3 seconds
+    setTimeout(() => {
+      toast.classList.remove('show');
+    }, 3000);
+  }
+
+  // Helper: Title Case
+  function toTitleCase(str) {
+    if (!str) return '';
+    return str.toLowerCase().split(' ').map(word => {
+      // Handle prepositions if desired, for now simple capitalize first letter
+      if (word.length > 2 || word === 'de' || word === 'da' || word === 'do') return word.charAt(0).toUpperCase() + word.slice(1);
+      return word; // e.g. "e"
+    }).map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+  }
+
+  function renderNetworking(listData) {
+    if (!networkingList) return;
+    networkingList.innerHTML = '';
+
+    // Update counter
+    if (networkingCounter) {
+      networkingCounter.textContent = `${listData.length} ${t('participants') || 'participantes'}`;
+    }
+
+    listData.forEach(p => {
+      // Use translation for location if available, otherwise raw
+      const loc = t(p.location) || p.location;
+      const formattedName = toTitleCase(p.name);
+
+      const card = document.createElement('div');
+      card.className = 'participant-card';
+      card.innerHTML = `
+        <div class="participant-avatar">${p.initials}</div>
+        <div class="participant-info">
+          <h3 class="participant-name">${formattedName}</h3>
+          <div class="participant-meta">
+            <span class="meta-item">
+              <i data-lucide="map-pin"></i> ${loc}
+            </span>
+          </div>
+        </div>
+      `;
+
+      card.addEventListener('click', () => {
+        openModal({
+          type: 'profile',
+          data: { ...p, name: formattedName, location: loc } // Pass formatted data to modal
+        });
+      });
+
+      networkingList.appendChild(card);
+    });
+
+    refreshIcons();
+  }
+
+  // Search Logic
+  networkingSearch?.addEventListener('input', (e) => {
+    const term = e.target.value.toLowerCase();
+    const filtered = participants.filter(p =>
+      p.name.toLowerCase().includes(term) ||
+      p.location.toLowerCase().includes(term) ||
+      p.department.toLowerCase().includes(term)
+    );
+    renderNetworking(filtered);
+  });
+
+  // Initial Render
+  if (networkingList) {
+    // renderNetworking(participants); // Old static way
+    fetchParticipants(); // New DB way
+  }
+
   // --- MODAL LOGIC ---
   const modal = document.querySelector('#app-modal');
   const modalTitle = document.querySelector('#modal-title');
@@ -708,6 +882,74 @@ function initHome() {
       };
       modalActions.appendChild(btnMap);
       refreshIcons(); // Render the icon in the new button
+    } else if (data.type === 'profile') {
+      const p = data.data;
+
+      // Custom Profile Layout in Modal Body overrides info/desc
+      // We hide the default info elements and inject custom HTML
+      modalTime.style.display = 'none';
+      modalLoc.style.display = 'none';
+      modalDesc.style.display = 'none';
+
+      // Use a custom container if it doesn't exist, or clear body content
+      // Simpler approach: Allow the body to handle different content structure dynamically
+      // For now, let's inject a new div for profile
+
+      let profileContainer = document.querySelector('#modal-profile-content');
+      if (!profileContainer) {
+        profileContainer = document.createElement('div');
+        profileContainer.id = 'modal-profile-content';
+        document.querySelector('.modal-body').appendChild(profileContainer);
+      }
+      profileContainer.style.display = 'block';
+
+      // Clear previous content
+      profileContainer.innerHTML = `
+        <div class="profile-header">
+          <div class="profile-avatar-large">${p.initials}</div>
+          <div>
+            <h3 class="profile-name">${p.name}</h3>
+            <div class="profile-meta">
+              <span class="meta-item"><i data-lucide="map-pin"></i> ${p.location}</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="contact-info-block">
+          <label class="contact-label">Email</label>
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <span class="contact-value" style="margin-bottom: 0;">${p.email}</span>
+            <button class="copy-btn" id="btn-copy-email" type="button" aria-label="Copiar email" style="background:none; border:none; color:var(--color-primary); cursor:pointer; padding: 4px;">
+              <i data-lucide="copy"></i>
+            </button>
+          </div>
+        </div>
+      `;
+
+      // Attach copy event listener
+      const copyBtn = profileContainer.querySelector('#btn-copy-email');
+      if (copyBtn) {
+        copyBtn.addEventListener('click', (e) => {
+          copyToClipboard(p.email, e.currentTarget);
+        });
+      }
+
+      // Update title to be generic or hidden
+      modalTitle.textContent = 'Perfil';
+
+      // Re-trigger icon scan for the new content injected
+      setTimeout(refreshIcons, 0);
+
+      // Re-trigger icon scan for the new content injected
+      setTimeout(refreshIcons, 0);
+
+    } else {
+      // Restore defaults for other types
+      modalTime.style.display = 'block';
+      modalLoc.style.display = 'block';
+      modalDesc.style.display = 'block';
+      const profileContainer = document.querySelector('#modal-profile-content');
+      if (profileContainer) profileContainer.style.display = 'none';
     }
 
     modal.showModal();
@@ -723,17 +965,19 @@ function initHome() {
     importantNotices.slice(0, 2).forEach((notice, index) => {
       const article = document.createElement('article');
       article.className = 'announcement-card';
-      article.style.cursor = 'pointer'; // Indicate clickable
+      // article.style.cursor = 'pointer'; // Removed clickable indication indicating
       article.innerHTML = `<p>${t(notice.textKey)}</p>`;
 
-      // Click event for modal
+      // Click event for modal removed
+      /*
       article.addEventListener('click', () => {
         openModal({
           type: 'notice',
           title: t(notice.textKey),
-          description: t(`notice${index + 1}Desc`) || 'Detalhes adicionais em breve.' // Fallback or map keys
+          description: t(`notice${index + 1} Desc`) || 'Detalhes adicionais em breve.' // Fallback or map keys
         });
       });
+      */
 
       noticesContainer.appendChild(article);
     });
@@ -868,7 +1112,7 @@ function initHome() {
           time: session.time,
           location: t(session.locationKey),
           // Fallback description logic
-          description: t(`session${session.id}Desc`) || 'Descrição da atividade indisponível no momento.'
+          description: t(`session${session.id} Desc`) || 'Descrição da atividade indisponível no momento.'
         });
       });
 
@@ -914,15 +1158,14 @@ function initHome() {
     ctx.drawImage(mapImage, 0, 0, canvas.width, canvas.height);
 
     if (zoomIndicator) {
-      zoomIndicator.textContent = `${Math.round(scale * 100)}%`;
+      zoomIndicator.textContent = `${Math.round(scale * 100)}% `;
     }
   }
 
   function focusLocation(loc) {
     if (!mapLoaded || !canvasWrapper) return;
-    // Sempre usar 40% ao focar qualquer local
-    scale = BASE_ZOOM;
-    renderMap();
+    // Removed: scale = BASE_ZOOM - maintain current user zoom (or auto-fit)
+    // Removed: renderMap() - no need to re-render if scale doesn't change
 
     // Scroll to center the location
     // loc.x, loc.y are normalized 0-1
@@ -979,14 +1222,30 @@ function initHome() {
     mapImage.onload = () => {
       mapLoaded = true;
 
-      // Zoom inicial fixo em 40%, respeitando limites
-      scale = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, BASE_ZOOM));
+      // Fit Width Logic
+      if (canvasWrapper) {
+        // Calculate scale to fit the wrapper width
+        // We subtract a small buffer (e.g. 1px) to avoid rounding pixel scroll issues
+        const containerWidth = canvasWrapper.clientWidth;
+
+        if (containerWidth > 0) {
+          scale = containerWidth / mapImage.width;
+        } else {
+          // Fallback if hidden
+          scale = BASE_ZOOM;
+        }
+
+        // Update MIN_ZOOM constraint logic if needed would go here
+      } else {
+        scale = BASE_ZOOM;
+      }
+
       renderMap();
 
-      // Começa mostrando o topo centralizado horizontalmente
+      // Começa mostrando o topo centralizado horizontalmente (se houver sobra) ou alinhado
       if (canvasWrapper) {
         canvasWrapper.scrollTop = 0;
-        canvasWrapper.scrollLeft = (canvas.width - canvasWrapper.clientWidth) / 2;
+        canvasWrapper.scrollLeft = 0;
       }
     };
 
@@ -1046,15 +1305,15 @@ function initHome() {
     //  ./assets/photos/terca-01.jpg
     //  ./assets/photos/quarta-01.jpg
     // Enquanto url for null, a aba exibirá apenas o texto "em breve".
-    { id: 1, day: 'sunday', url: null },   // ./assets/photos/domingo-01.jpg
-    { id: 2, day: 'sunday', url: null },   // ./assets/photos/domingo-02.jpg
-    { id: 3, day: 'monday', url: null },   // ./assets/photos/segunda-01.jpg
-    { id: 4, day: 'monday', url: null },   // ./assets/photos/segunda-02.jpg
-    { id: 5, day: 'monday', url: null },   // ./assets/photos/segunda-03.jpg
-    { id: 6, day: 'tuesday', url: null },  // ./assets/photos/terca-01.jpg
-    { id: 7, day: 'tuesday', url: null },  // ./assets/photos/terca-02.jpg
-    { id: 8, day: 'wednesday', url: null },// ./assets/photos/quarta-01.jpg
-    { id: 9, day: 'wednesday', url: null },// ./assets/photos/quarta-02.jpg
+    { id: 1, day: 'sunday', url: './assets/photos/template.png' },
+    { id: 2, day: 'sunday', url: null },
+    { id: 3, day: 'monday', url: null },
+    { id: 4, day: 'monday', url: null },
+    { id: 5, day: 'monday', url: null },
+    { id: 6, day: 'tuesday', url: null },
+    { id: 7, day: 'tuesday', url: null },
+    { id: 8, day: 'wednesday', url: null },
+    { id: 9, day: 'wednesday', url: null },
   ];
 
   function renderPhotos(filterDay = 'all') {
@@ -1083,20 +1342,55 @@ function initHome() {
         <div class="photo-image-wrapper">
           <img src="${photo.url}" alt="Foto ${photo.id}" class="photo-image" loading="lazy" />
         </div>
+        <button type="button" class="photo-share-btn" aria-label="Compartilhar no LinkedIn">
+          <i data-lucide="linkedin"></i>
+        </button>
         <button type="button" class="photo-download-btn" aria-label="${t('download')}">
           <i data-lucide="download"></i>
         </button>
       `;
 
-      // Download da foto real
-      const btn = card.querySelector('.photo-download-btn');
-      btn.addEventListener('click', (e) => {
+      // Download Function
+      const btnDownload = card.querySelector('.photo-download-btn');
+      btnDownload.addEventListener('click', (e) => {
         e.stopPropagation();
         const link = document.createElement('a');
         link.href = photo.url;
-        // Sugere um nome de arquivo simples baseado no id
         link.download = `photo-${photo.id}`;
         link.click();
+      });
+
+      // LinkedIn Share Function
+      const btnShare = card.querySelector('.photo-share-btn');
+      btnShare.addEventListener('click', async (e) => {
+        e.stopPropagation();
+
+        // Construct visual url (since localhost won't work for preview, we share the link or just text)
+        // Ideally this would be the hosted URL of the image.
+        // Assuming we want to share the Event URL + Image context.
+        const shareUrl = "https://sherwin-latam-2026.app"; // Placeholder or real URL
+        const shareText = `Confira minha foto na Convenção LATAM 2026 da Sherwin-Williams! #ForgeAhead #SherwinWilliams`;
+
+        // Mobile Native Share
+        if (navigator.share) {
+          try {
+            await navigator.share({
+              title: 'Convenção LATAM 2026',
+              text: shareText,
+              url: shareUrl
+            });
+            return;
+          } catch (err) {
+            console.log('Share canceled or failed', err);
+          }
+        }
+
+        // Fallback: LinkedIn Intent
+        // LinkedIn only accepts a URL parameter. It scrapes the image from the OG tags of that URL.
+        // We cannot upload a local image to LinkedIn via URL intent.
+        // Best approach: Share the App URL.
+        const linkedinUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`;
+        window.open(linkedinUrl, '_blank', 'width=600,height=600');
       });
 
       photosGrid.appendChild(card);
@@ -1135,7 +1429,8 @@ function initHome() {
   const viewConfig = {
     agenda: { titleKey: 'homeTitle', subtitleKey: 'homeDate' },
     mapa: { titleKey: 'mapTitle', subtitleKey: 'mapSubtitle' },
-    fotos: { titleKey: 'photosTitle', subtitleKey: 'photosSubtitle' }
+    fotos: { titleKey: 'photosTitle', subtitleKey: 'photosSubtitle' },
+    networking: { titleKey: 'networkingTitle', subtitleKey: 'homeDate' }
   };
 
   function updateHeader(viewName) {
@@ -1164,6 +1459,20 @@ function initHome() {
         const view = section.dataset.view;
         section.classList.toggle('is-hidden', view !== target);
       });
+
+      // Se mudou para o mapa, recalcula o zoom para preencher a largura
+      // Precisamos de um pequeno delay ou requestAnimationFrame para que o "display: flex" tenha efeito no DOM
+      if (target === 'mapa' && mapLoaded && canvasWrapper && mapImage) {
+        requestAnimationFrame(() => {
+          const w = canvasWrapper.clientWidth;
+          if (w > 0) {
+            scale = w / mapImage.width;
+            // Garante que não fique minúsculo, mas respeita a largura
+            if (scale < 0.1) scale = 0.4;
+            renderMap();
+          }
+        });
+      }
 
       // Update Header
       updateHeader(target);
@@ -1208,3 +1517,89 @@ function initHome() {
 }
 
 document.addEventListener('DOMContentLoaded', initHome);
+
+async function copyToClipboard(text, triggerBtn = null) {
+  let success = false;
+
+  // 1. Tentar API moderna (navigator.clipboard) se estiver em contexto seguro
+  if (navigator.clipboard && window.isSecureContext) {
+    try {
+      await navigator.clipboard.writeText(text);
+      success = true;
+    } catch (err) {
+      console.error('Clipboard API falhou, tentando fallback...', err);
+    }
+  }
+
+  // 2. Fallback robusto se a API falhou
+  if (!success) {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+
+    // Invisível mas selecionável
+    textArea.style.position = "fixed";
+    textArea.style.left = "0";
+    textArea.style.top = "0";
+    textArea.style.opacity = "0";
+    textArea.style.pointerEvents = "none";
+    textArea.style.zIndex = "-1";
+    textArea.contentEditable = true;
+    textArea.readOnly = false;
+
+    document.body.appendChild(textArea);
+
+    try {
+      if (navigator.userAgent.match(/ipad|iphone/i)) {
+        // Seleção especial para iOS
+        const range = document.createRange();
+        range.selectNodeContents(textArea);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+        textArea.setSelectionRange(0, 999999);
+      } else {
+        textArea.select();
+      }
+
+      success = document.execCommand('copy');
+    } catch (err) {
+      console.error('Fallback execCommand falhou', err);
+    } finally {
+      document.body.removeChild(textArea);
+      window.getSelection()?.removeAllRanges();
+    }
+  }
+
+  // 3. Feedback Visual (Toast + Button Animation)
+  if (success) {
+    showToast('Email copiado!');
+
+    if (triggerBtn) {
+      const originalHTML = triggerBtn.innerHTML;
+      // Change to check icon
+      triggerBtn.innerHTML = `<i data-lucide="check"></i>`;
+      triggerBtn.classList.add('success');
+
+      // Re-render icon on this button
+      if (window.lucide && window.lucide.createIcons) {
+        window.lucide.createIcons({
+          root: triggerBtn
+        });
+      }
+
+      setTimeout(() => {
+        triggerBtn.classList.remove('success');
+        triggerBtn.innerHTML = originalHTML;
+        // Re-render original icon
+        if (window.lucide && window.lucide.createIcons) {
+          window.lucide.createIcons({
+            root: triggerBtn
+          });
+        }
+      }, 2000);
+    }
+  } else {
+    showToast('Erro ao copiar. Selecione manualmente.');
+  }
+}
+

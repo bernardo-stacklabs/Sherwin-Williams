@@ -143,6 +143,27 @@
             <!-- JS Rendered Content -->
           </div>
         </section>
+
+        <section class="home-section is-hidden" data-view="networking">
+          <header class="section-header">
+            <div class="section-title-wrap">
+              <h2 class="section-title" data-i18n="networkingTitle">Networking</h2>
+              <span class="networking-counter" id="networking-counter"></span>
+            </div>
+          </header>
+
+          <div class="search-bar-container">
+            <div class="search-input-wrapper">
+              <i data-lucide="search" class="search-icon"></i>
+              <input type="text" id="networking-search" class="search-input" placeholder="Buscar por nome ou país..."
+                data-i18n-placeholder="searchPlaceholder">
+            </div>
+          </div>
+
+          <div class="networking-list" id="networking-list">
+            <!-- JS Rendered Participants -->
+          </div>
+        </section>
         <nav class="bottom-nav" aria-label="Navegação principal do app">
           <button class="bottom-nav-item is-active" type="button" data-view-target="agenda">
             <span class="bottom-nav-icon" aria-hidden="true">
@@ -161,6 +182,12 @@
               <i data-lucide="image"></i>
             </span>
             <span class="bottom-nav-label" data-i18n="navPhotos">Fotos</span>
+          </button>
+          <button class="bottom-nav-item" type="button" data-view-target="networking">
+            <span class="bottom-nav-icon" aria-hidden="true">
+              <i data-lucide="users"></i>
+            </span>
+            <span class="bottom-nav-label" data-i18n="navNetworking">Networking</span>
           </button>
         </nav>
     </section>
@@ -183,8 +210,10 @@
         <div id="modal-actions" class="modal-actions"></div>
       </div>
     </dialog>
+    </dialog>
   </main>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="./app.js?v=2" type="module"></script>
 </body>
 
