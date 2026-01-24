@@ -318,9 +318,18 @@ function initHome() {
       }
     });
 
+    // Update placeholders
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+      const key = el.dataset.i18nPlaceholder;
+      if (texts[key]) {
+        el.placeholder = texts[key];
+      }
+    });
+
     // Re-render dynamic content (Notices & Agenda)
     renderNotices();
     renderSchedule(activeDay);
+    renderLocations(); // Update map translations
 
     // Re-render Networking if it exists (using current search term if any)
     if (typeof renderNetworking === 'function' && typeof participants !== 'undefined') {
@@ -1342,8 +1351,8 @@ function initHome() {
         <div class="photo-image-wrapper">
           <img src="${photo.url}" alt="Foto ${photo.id}" class="photo-image" loading="lazy" />
         </div>
-        <button type="button" class="photo-share-btn" aria-label="Compartilhar no LinkedIn">
-          <i data-lucide="linkedin"></i>
+        <button type="button" class="photo-share-btn" aria-label="Compartilhar">
+          <i data-lucide="corner-up-right"></i>
         </button>
         <button type="button" class="photo-download-btn" aria-label="${t('download')}">
           <i data-lucide="download"></i>

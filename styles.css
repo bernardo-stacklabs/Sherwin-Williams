@@ -1485,8 +1485,7 @@ body.dark-mode .session-status.session-status-next {
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: rgba(0, 119, 181, 0.9);
-  /* LinkedIn Blue */
+  background: rgba(0, 0, 0, 0.6);
   color: #fff;
   border: none;
   display: flex;
@@ -1496,11 +1495,12 @@ body.dark-mode .session-status.session-status-next {
   -webkit-backdrop-filter: blur(4px);
   backdrop-filter: blur(4px);
   transition: all 0.2s;
-  opacity: 0.9;
+  opacity: 0.8;
 }
 
 .photo-share-btn:hover {
-  background: #005582;
+  background: var(--color-primary);
+  color: #000;
   transform: scale(1.05);
   opacity: 1;
 }
