@@ -870,6 +870,18 @@ function initHome() {
   function openModal(data) {
     if (!modal) return;
 
+    // Always reset modal layout/state first.
+    // This prevents content from a previous "profile" modal from leaking into
+    // a subsequent "session" modal (e.g., Agenda clicks showing a user card).
+    if (modalTime) modalTime.style.display = 'block';
+    if (modalLoc) modalLoc.style.display = 'block';
+    if (modalDesc) modalDesc.style.display = 'block';
+    const existingProfileContainer = modal.querySelector('#modal-profile-content');
+    if (existingProfileContainer) {
+      existingProfileContainer.style.display = 'none';
+      existingProfileContainer.innerHTML = '';
+    }
+
     // Reset fields
     modalTitle.textContent = data.title || '';
     modalTime.textContent = data.time || '';
@@ -906,15 +918,13 @@ function initHome() {
       modalLoc.style.display = 'none';
       modalDesc.style.display = 'none';
 
-      // Use a custom container if it doesn't exist, or clear body content
-      // Simpler approach: Allow the body to handle different content structure dynamically
-      // For now, let's inject a new div for profile
-
-      let profileContainer = document.querySelector('#modal-profile-content');
+      // Use a custom container inside this modal (scoped) so it doesn't leak
+      // across other dialogs/contexts.
+      let profileContainer = modal.querySelector('#modal-profile-content');
       if (!profileContainer) {
         profileContainer = document.createElement('div');
         profileContainer.id = 'modal-profile-content';
-        document.querySelector('.modal-body').appendChild(profileContainer);
+        modal.querySelector('.modal-body')?.appendChild(profileContainer);
       }
       profileContainer.style.display = 'block';
 
@@ -955,15 +965,12 @@ function initHome() {
       // Re-trigger icon scan for the new content injected
       setTimeout(refreshIcons, 0);
 
-      // Re-trigger icon scan for the new content injected
-      setTimeout(refreshIcons, 0);
-
     } else {
       // Restore defaults for other types
       modalTime.style.display = 'block';
       modalLoc.style.display = 'block';
       modalDesc.style.display = 'block';
-      const profileContainer = document.querySelector('#modal-profile-content');
+      const profileContainer = modal.querySelector('#modal-profile-content');
       if (profileContainer) profileContainer.style.display = 'none';
     }
 
