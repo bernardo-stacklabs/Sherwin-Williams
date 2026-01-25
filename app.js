@@ -1478,20 +1478,7 @@ function initHome() {
         <button type="button" class="photo-share-btn" aria-label="Compartilhar">
           <i data-lucide="corner-up-right"></i>
         </button>
-        <button type="button" class="photo-download-btn" aria-label="${t('download')}">
-          <i data-lucide="download"></i>
-        </button>
       `;
-
-      // Download Function
-      const btnDownload = card.querySelector('.photo-download-btn');
-      btnDownload.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const link = document.createElement('a');
-        link.href = photo.url;
-        link.download = photo.filename || `photo-${photo.id}`;
-        link.click();
-      });
 
       // LinkedIn Share Function
       const btnShare = card.querySelector('.photo-share-btn');
@@ -1499,17 +1486,15 @@ function initHome() {
         e.stopPropagation();
 
         const shareTitle = 'Convenção LATAM 2026';
-        // If/when you add an OG share page per photo, store it in DB as share_url.
-        const shareUrl = (photo.share_url || photo.og_url) || new URL('./app.html', window.location.href).toString();
         const shareText = `Confira minha foto na Convenção LATAM 2026 da Sherwin-Williams! #ForgeAhead #SherwinWilliams`;
 
         // Best effort: on iOS/Android, sharing the actual image file lets the LinkedIn app attach it.
-        // LinkedIn's web URL intent cannot attach images.
+        // On desktop browsers, sharing files is often unsupported.
         const tryShareImageFile = async () => {
           if (!navigator.share) return false;
 
           try {
-            const resp = await fetch(photo.url, { cache: 'no-cache' });
+            const resp = await fetch(photo.url, { cache: 'no-store' });
             if (!resp.ok) return false;
             const blob = await resp.blob();
 
@@ -1522,7 +1507,7 @@ function initHome() {
 
             await navigator.share({
               title: shareTitle,
-              text: `${shareText} ${shareUrl}`,
+              text: shareText,
               files: [file],
             });
 
@@ -1536,13 +1521,13 @@ function initHome() {
         const sharedFile = await tryShareImageFile();
         if (sharedFile) return;
 
-        // Fallback: basic share (text + link)
+        // Fallback: basic share (text + direct image URL)
         if (navigator.share) {
           try {
             await navigator.share({
               title: shareTitle,
               text: shareText,
-              url: shareUrl
+              url: photo.url
             });
             return;
           } catch (err) {
@@ -1550,15 +1535,11 @@ function initHome() {
           }
         }
 
-        // Fallback: LinkedIn Intent
-        // LinkedIn only accepts a URL parameter. It scrapes the image from the OG tags of that URL.
-        // We cannot upload a local image to LinkedIn via URL intent.
-        // Best approach: Share the App URL.
-        const linkedinUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`;
-        window.open(linkedinUrl, '_blank', 'width=600,height=600');
+        // Last resort: open the image in a new tab so the user can save/share manually.
+        window.open(photo.url, '_blank');
 
         if (typeof showToast === 'function') {
-          showToast('No desktop, o LinkedIn não anexa imagem via link. No celular, use Compartilhar para enviar a foto ao app do LinkedIn.');
+          showToast('Abra a foto e use o menu do navegador para compartilhar/salvar.');
         }
       });
 
