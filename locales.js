@@ -22,7 +22,7 @@ export const i18n = {
         download: 'Baixar',
         mapPlaceholder: 'Em breve, você verá aqui o mapa interativo dos espaços da convenção.',
         photosPlaceholder: 'Após o evento, as fotos oficiais ficarão disponíveis nesta aba.',
-        photosSaveHint: 'Dica: para salvar no iPhone, clique e segure a foto e escolha “Adicionar às Fotos”.',
+        photosSaveHint: 'Dica: para salvar, clique e segure a foto e escolha “Salvar”.',
         now: 'Agora',
         next: 'Próximo',
         finished: 'Concluído',
