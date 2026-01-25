@@ -700,6 +700,21 @@ function initHome() {
 
   let participants = []; // Dynamic list
 
+  function buildUserPhotoUrl(userRow) {
+    if (!userRow) return null;
+    if (userRow.photo_url) return userRow.photo_url;
+
+    // Optional future-proof field: store only the path in DB and build public URL here.
+    // Bucket name from your Supabase Storage: team
+    if (userRow.photo_path) {
+      const baseUrl = (supabaseConfig && supabaseConfig.url) ? supabaseConfig.url.replace(/\/$/, '') : '';
+      if (!baseUrl) return null;
+      return `${baseUrl}/storage/v1/object/public/team/${String(userRow.photo_path).replace(/^\//, '')}`;
+    }
+
+    return null;
+  }
+
   async function fetchParticipants() {
     if (!networkingList) return;
 
@@ -741,7 +756,7 @@ function initHome() {
           email: u.email,
           linkedin: '',
           initials: getInitials(fullName),
-          photo_url: u.photo_url || null // Will be null until column added
+          photo_url: buildUserPhotoUrl(u)
         };
       });
 
@@ -804,10 +819,14 @@ function initHome() {
       const loc = t(p.location) || p.location;
       const formattedName = toTitleCase(p.name);
 
+      const avatarHtml = p.photo_url
+        ? `<img src="${p.photo_url}" alt="Foto de ${formattedName}" loading="lazy" />`
+        : `${p.initials}`;
+
       const card = document.createElement('div');
       card.className = 'participant-card';
       card.innerHTML = `
-        <div class="participant-avatar">${p.initials}</div>
+        <div class="participant-avatar">${avatarHtml}</div>
         <div class="participant-info">
           <h3 class="participant-name">${formattedName}</h3>
           <div class="participant-meta">
@@ -929,9 +948,13 @@ function initHome() {
       profileContainer.style.display = 'block';
 
       // Clear previous content
+      const profileAvatarHtml = p.photo_url
+        ? `<img src="${p.photo_url}" alt="Foto de ${p.name}" loading="lazy" />`
+        : `${p.initials}`;
+
       profileContainer.innerHTML = `
         <div class="profile-header">
-          <div class="profile-avatar-large">${p.initials}</div>
+          <div class="profile-avatar-large">${profileAvatarHtml}</div>
           <div>
             <h3 class="profile-name">${p.name}</h3>
             <div class="profile-meta">
@@ -1318,7 +1341,10 @@ function initHome() {
 
   // Navegação inferior (Agenda / Mapa / Fotos)
   // --- PHOTOS LOGIC ---
-  const photosData = [
+  const GALLERY_BUCKET = 'gallery';
+  const GALLERY_DAYS = ['sunday', 'monday', 'tuesday', 'wednesday'];
+
+  let photosData = [
     // Para ativar as fotos reais, basta apontar as URLs
     // para arquivos estáticos em ./assets/photos
     // Exemplo sugerido de nomes de arquivo:
@@ -1337,6 +1363,91 @@ function initHome() {
     { id: 8, day: 'wednesday', url: null },
     { id: 9, day: 'wednesday', url: null },
   ];
+
+  function buildGalleryPublicUrl(storagePath) {
+    if (!storagePath) return null;
+    const baseUrl = (supabaseConfig && supabaseConfig.url) ? supabaseConfig.url.replace(/\/$/, '') : '';
+    if (!baseUrl) return null;
+    const cleanPath = String(storagePath).replace(/^\//, '');
+    const encodedPath = cleanPath
+      .split('/')
+      .map((segment) => encodeURIComponent(segment))
+      .join('/');
+    return `${baseUrl}/storage/v1/object/public/${GALLERY_BUCKET}/${encodedPath}`;
+  }
+
+  async function tryLoadPhotosFromStorage() {
+    const photosGrid = document.querySelector('#photos-grid');
+    if (!photosGrid) return false;
+
+    try {
+      const client = await getSupabaseClient();
+      const storage = client.storage.from(GALLERY_BUCKET);
+
+      const pageSize = 100;
+      const allPhotos = [];
+
+      for (const day of GALLERY_DAYS) {
+        let offset = 0;
+        while (true) {
+          const { data, error } = await storage.list(day, {
+            limit: pageSize,
+            offset,
+            sortBy: { column: 'name', order: 'asc' },
+          });
+
+          if (error) {
+            console.error(`Error listing storage folder ${day}:`, error);
+            return false;
+          }
+
+          const items = Array.isArray(data) ? data : [];
+
+          // Filter to common image types; ignore placeholder/folders.
+          const imageItems = items.filter((it) => {
+            const name = String(it?.name || '');
+            if (!name) return false;
+            const lower = name.toLowerCase();
+            return lower.endsWith('.jpg') || lower.endsWith('.jpeg') || lower.endsWith('.png') || lower.endsWith('.webp');
+          });
+
+          for (const it of imageItems) {
+            const name = String(it.name);
+            const storage_path = `${day}/${name}`;
+            allPhotos.push({
+              day,
+              storage_path,
+              filename: name,
+              url: buildGalleryPublicUrl(storage_path),
+            });
+          }
+
+          if (items.length < pageSize) break;
+          offset += pageSize;
+        }
+      }
+
+      if (allPhotos.length === 0) return false;
+
+      // Assign numeric IDs for existing download/share code paths.
+      let nextId = 1;
+      photosData = allPhotos.map((p) => ({
+        id: nextId++,
+        day: p.day,
+        url: p.url,
+        filename: p.filename,
+        storage_path: p.storage_path,
+        share_url: null,
+        og_url: null,
+      }));
+
+      renderPhotos(document.querySelector('.photo-tabs .day-pill.is-active')?.dataset?.photoDay || 'all');
+      return true;
+    } catch (err) {
+      console.error('Photos Storage Load Error:', err);
+      return false;
+    }
+  }
 
   function renderPhotos(filterDay = 'all') {
     const photosGrid = document.querySelector('#photos-grid');
@@ -1378,7 +1489,7 @@ function initHome() {
         e.stopPropagation();
         const link = document.createElement('a');
         link.href = photo.url;
-        link.download = `photo-${photo.id}`;
+        link.download = photo.filename || `photo-${photo.id}`;
         link.click();
       });
 
@@ -1388,7 +1499,8 @@ function initHome() {
         e.stopPropagation();
 
         const shareTitle = 'Convenção LATAM 2026';
-        const shareUrl = new URL('./app.html', window.location.href).toString();
+        // If/when you add an OG share page per photo, store it in DB as share_url.
+        const shareUrl = (photo.share_url || photo.og_url) || new URL('./app.html', window.location.href).toString();
         const shareText = `Confira minha foto na Convenção LATAM 2026 da Sherwin-Williams! #ForgeAhead #SherwinWilliams`;
 
         // Best effort: on iOS/Android, sharing the actual image file lets the LinkedIn app attach it.
@@ -1403,7 +1515,8 @@ function initHome() {
 
             const mime = blob.type || 'image/png';
             const ext = mime.includes('jpeg') ? 'jpg' : mime.includes('png') ? 'png' : 'png';
-            const file = new File([blob], `photo-${photo.id}.${ext}`, { type: mime });
+            const fileName = photo.filename || `photo-${photo.id}.${ext}`;
+            const file = new File([blob], fileName, { type: mime });
 
             if (navigator.canShare && !navigator.canShare({ files: [file] })) return false;
 
@@ -1458,6 +1571,10 @@ function initHome() {
   if (photoTabs.length > 0) {
     // Initial Render
     renderPhotos('all');
+
+    // Storage-only mode: photos appear automatically when uploaded into the correct day folder.
+    // If listing fails (policy / permissions), the UI will keep showing the placeholder.
+    tryLoadPhotosFromStorage();
 
     photoTabs.forEach(tab => {
       tab.addEventListener('click', () => {
