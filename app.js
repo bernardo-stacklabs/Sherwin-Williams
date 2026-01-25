@@ -1387,17 +1387,47 @@ function initHome() {
       btnShare.addEventListener('click', async (e) => {
         e.stopPropagation();
 
-        // Construct visual url (since localhost won't work for preview, we share the link or just text)
-        // Ideally this would be the hosted URL of the image.
-        // Assuming we want to share the Event URL + Image context.
-        const shareUrl = "https://sherwin-latam-2026.app"; // Placeholder or real URL
+        const shareTitle = 'Convenção LATAM 2026';
+        const shareUrl = new URL('./app.html', window.location.href).toString();
         const shareText = `Confira minha foto na Convenção LATAM 2026 da Sherwin-Williams! #ForgeAhead #SherwinWilliams`;
 
-        // Mobile Native Share
+        // Best effort: on iOS/Android, sharing the actual image file lets the LinkedIn app attach it.
+        // LinkedIn's web URL intent cannot attach images.
+        const tryShareImageFile = async () => {
+          if (!navigator.share) return false;
+
+          try {
+            const resp = await fetch(photo.url, { cache: 'no-cache' });
+            if (!resp.ok) return false;
+            const blob = await resp.blob();
+
+            const mime = blob.type || 'image/png';
+            const ext = mime.includes('jpeg') ? 'jpg' : mime.includes('png') ? 'png' : 'png';
+            const file = new File([blob], `photo-${photo.id}.${ext}`, { type: mime });
+
+            if (navigator.canShare && !navigator.canShare({ files: [file] })) return false;
+
+            await navigator.share({
+              title: shareTitle,
+              text: `${shareText} ${shareUrl}`,
+              files: [file],
+            });
+
+            return true;
+          } catch (err) {
+            // User cancel / not supported / permission issues.
+            return false;
+          }
+        };
+
+        const sharedFile = await tryShareImageFile();
+        if (sharedFile) return;
+
+        // Fallback: basic share (text + link)
         if (navigator.share) {
           try {
             await navigator.share({
-              title: 'Convenção LATAM 2026',
+              title: shareTitle,
               text: shareText,
               url: shareUrl
             });
@@ -1413,6 +1443,10 @@ function initHome() {
         // Best approach: Share the App URL.
         const linkedinUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`;
         window.open(linkedinUrl, '_blank', 'width=600,height=600');
+
+        if (typeof showToast === 'function') {
+          showToast('No desktop, o LinkedIn não anexa imagem via link. No celular, use Compartilhar para enviar a foto ao app do LinkedIn.');
+        }
       });
 
       photosGrid.appendChild(card);

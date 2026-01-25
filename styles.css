@@ -1508,8 +1508,9 @@ body.dark-mode .session-status.session-status-next {
 .photo-share-btn svg {
   width: 16px;
   height: 16px;
-  fill: currentColor;
-  stroke: none;
+  stroke: currentColor;
+  stroke-width: 2.5;
+  fill: none;
 }
 
 /* Dark mode overrides */
