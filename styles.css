@@ -1117,6 +1117,18 @@ body.dark-mode .session-status.session-status-next {
   color: #888;
   cursor: pointer;
   padding: 4px;
+  border-radius: 10px;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.modal-close:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.modal-close:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
 }
 
 .modal-body {

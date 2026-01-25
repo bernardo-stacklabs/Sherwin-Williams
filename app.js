@@ -1129,6 +1129,16 @@ function initHome() {
     }
 
     modal.showModal();
+
+    // iOS Safari frequentemente foca o primeiro botão (X), deixando-o com aparência de "selecionado".
+    // Em telas touch, removemos esse foco automático; em desktop/teclado, mantemos para acessibilidade.
+    try {
+      if (modalClose && window.matchMedia && window.matchMedia('(pointer: coarse)').matches) {
+        requestAnimationFrame(() => modalClose.blur());
+      }
+    } catch (_) {
+      // no-op
+    }
   }
 
   // --- RENDER FUNCTIONS ---
