@@ -1494,14 +1494,26 @@ function initHome() {
           if (!navigator.share) return false;
 
           try {
-            const resp = await fetch(photo.url, { cache: 'no-store' });
-            if (!resp.ok) return false;
-            const blob = await resp.blob();
+            let blob = null;
 
-            const mime = blob.type || 'image/png';
-            const ext = mime.includes('jpeg') ? 'jpg' : mime.includes('png') ? 'png' : 'png';
-            const fileName = photo.filename || `photo-${photo.id}.${ext}`;
-            const file = new File([blob], fileName, { type: mime });
+            // Prefer Storage API download (more reliable than cross-origin fetch on iOS)
+            if (photo.storage_path) {
+              const client = await getSupabaseClient();
+              const { data, error } = await client.storage
+                .from(GALLERY_BUCKET)
+                .download(photo.storage_path);
+              if (error || !data) return false;
+              blob = data;
+            } else {
+              const resp = await fetch(photo.url, { cache: 'no-store', mode: 'cors' });
+              if (!resp.ok) return false;
+              blob = await resp.blob();
+            }
+
+            const fileName = photo.filename || `photo-${photo.id}`;
+            const mime = blob.type || (String(fileName).toLowerCase().endsWith('.jpg') || String(fileName).toLowerCase().endsWith('.jpeg') ? 'image/jpeg' : 'image/png');
+            const safeFileName = fileName.includes('.') ? fileName : `${fileName}${mime.includes('jpeg') ? '.jpg' : '.png'}`;
+            const file = new File([blob], safeFileName, { type: mime });
 
             if (navigator.canShare && !navigator.canShare({ files: [file] })) return false;
 
@@ -1521,25 +1533,10 @@ function initHome() {
         const sharedFile = await tryShareImageFile();
         if (sharedFile) return;
 
-        // Fallback: basic share (text + direct image URL)
-        if (navigator.share) {
-          try {
-            await navigator.share({
-              title: shareTitle,
-              text: shareText,
-              url: photo.url
-            });
-            return;
-          } catch (err) {
-            console.log('Share canceled or failed', err);
-          }
-        }
-
-        // Last resort: open the image in a new tab so the user can save/share manually.
+        // If the browser can't share files, open the image and guide the user.
         window.open(photo.url, '_blank');
-
         if (typeof showToast === 'function') {
-          showToast('Abra a foto e use o menu do navegador para compartilhar/salvar.');
+          showToast('Seu navegador não conseguiu anexar a foto. Abra a imagem e use “Salvar imagem”/Compartilhar.');
         }
       });
 

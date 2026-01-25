@@ -1,4 +1,4 @@
-const CACHE_NAME = 'sw-latam-2026-v11';
+const CACHE_NAME = 'sw-latam-2026-v12';
 
 // Minimal app-shell cache for true PWA behavior (offline + fast reload)
 // Note: the app uses cache-busting querystrings (?v=2). We handle that in fetch
