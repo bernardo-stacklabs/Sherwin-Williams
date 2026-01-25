@@ -311,6 +311,60 @@ function initHome() {
   let currentLang = 'pt';
   const langPills = document.querySelectorAll('.lang-pill');
 
+  function normalizeCountryToKey(country) {
+    if (!country) return null;
+    if (typeof country !== 'string') return null;
+
+    const raw = country.trim();
+    if (!raw) return null;
+
+    // If DB already stores the i18n key (e.g., "BRAZIL"), keep it.
+    if (i18n?.pt?.[raw] || i18n?.es?.[raw] || i18n?.en?.[raw]) return raw;
+
+    const normalized = raw
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/\./g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+    const map = {
+      BRAZIL: ['brasil', 'brazil', 'br'],
+      MEXICO: ['mexico', 'mx'],
+      CHILE: ['chile', 'cl'],
+      ARGENTINA: ['argentina', 'ar'],
+      COLOMBIA: ['colombia', 'co'],
+      ECUADOR: ['ecuador', 'ec'],
+      PERU: ['peru', 'pe'],
+      URUGUAY: ['uruguay', 'uy'],
+      USA: ['usa', 'eua', 'eeuu', 'us', 'united states', 'estados unidos'],
+    };
+
+    for (const [key, variants] of Object.entries(map)) {
+      if (variants.includes(normalized)) return key;
+    }
+
+    return null;
+  }
+
+  function getParticipantLocation(participant) {
+    if (!participant) return 'LATAM';
+
+    const city = (participant.city || '').trim();
+    const countryKey = participant.countryKey || null;
+    const countryRaw = (participant.countryRaw || '').trim();
+
+    const countryLabel = countryKey
+      ? (i18n?.[currentLang]?.[countryKey] || i18n?.pt?.[countryKey] || countryKey)
+      : countryRaw;
+
+    if (city && countryLabel) return `${city}, ${countryLabel}`;
+    if (countryLabel) return countryLabel;
+    if (city) return city;
+    return 'LATAM';
+  }
+
   function updateTexts(lang) {
     currentLang = lang;
     const texts = i18n[lang];
@@ -337,6 +391,12 @@ function initHome() {
     renderSchedule(activeDay);
     renderLocations(); // Update map translations
 
+    // Re-render Photos (placeholder + save hint) if present
+    if (typeof renderPhotos === 'function') {
+      const activePhotoDay = document.querySelector('.photo-tabs .day-pill.is-active')?.dataset?.photoDay || 'all';
+      renderPhotos(activePhotoDay);
+    }
+
     // Re-render Networking if it exists (using current search term if any)
     if (typeof renderNetworking === 'function' && typeof participants !== 'undefined') {
       const searchInput = document.querySelector('#networking-search');
@@ -344,7 +404,7 @@ function initHome() {
       const filtered = term
         ? participants.filter(p =>
           p.name.toLowerCase().includes(term) ||
-          p.location.toLowerCase().includes(term) ||
+          getParticipantLocation(p).toLowerCase().includes(term) ||
           p.department.toLowerCase().includes(term))
         : participants;
       renderNetworking(filtered);
@@ -873,16 +933,18 @@ function initHome() {
         // Handle name combination
         const fullName = [u.name, u.last_name].filter(Boolean).join(' ') || u.email.split('@')[0];
 
-        // Handle location combination
-        const locArgs = [u.city, u.country].filter(Boolean);
-        const locationStr = locArgs.length > 0 ? locArgs.join(', ') : 'LATAM';
+        const city = (u.city || '').trim();
+        const countryRaw = (u.country || '').trim();
+        const countryKey = normalizeCountryToKey(countryRaw);
 
         return {
           id: u.id,
           name: fullName,
           role: u.role || 'Participante', // Column not yet in DB, default value
           department: u.department || 'Sherwin-Williams', // Column not yet in DB, default value
-          location: locationStr,
+          city,
+          countryRaw,
+          countryKey,
           email: u.email,
           linkedin: '',
           initials: getInitials(fullName),
@@ -945,8 +1007,7 @@ function initHome() {
     }
 
     listData.forEach(p => {
-      // Use translation for location if available, otherwise raw
-      const loc = t(p.location) || p.location;
+      const loc = getParticipantLocation(p);
       const formattedName = toTitleCase(p.name);
 
       const avatarHtml = p.photo_url
@@ -985,7 +1046,7 @@ function initHome() {
     const term = e.target.value.toLowerCase();
     const filtered = participants.filter(p =>
       p.name.toLowerCase().includes(term) ||
-      p.location.toLowerCase().includes(term) ||
+      getParticipantLocation(p).toLowerCase().includes(term) ||
       p.department.toLowerCase().includes(term)
     );
     renderNetworking(filtered);
@@ -1487,26 +1548,23 @@ function initHome() {
   // Navegação inferior (Agenda / Mapa / Fotos)
   // --- PHOTOS LOGIC ---
   const GALLERY_BUCKET = 'gallery';
-  const GALLERY_DAYS = ['sunday', 'monday', 'tuesday', 'wednesday'];
+  const GALLERY_DAYS = ['monday', 'tuesday', 'wednesday'];
 
   let photosData = [
     // Para ativar as fotos reais, basta apontar as URLs
     // para arquivos estáticos em ./assets/photos
     // Exemplo sugerido de nomes de arquivo:
-    //  ./assets/photos/domingo-01.jpg
     //  ./assets/photos/segunda-01.jpg
     //  ./assets/photos/terca-01.jpg
     //  ./assets/photos/quarta-01.jpg
     // Enquanto url for null, a aba exibirá apenas o texto "em breve".
-    { id: 1, day: 'sunday', url: './assets/photos/template.png' },
-    { id: 2, day: 'sunday', url: null },
+    { id: 1, day: 'monday', url: null },
+    { id: 2, day: 'monday', url: null },
     { id: 3, day: 'monday', url: null },
-    { id: 4, day: 'monday', url: null },
-    { id: 5, day: 'monday', url: null },
-    { id: 6, day: 'tuesday', url: null },
-    { id: 7, day: 'tuesday', url: null },
-    { id: 8, day: 'wednesday', url: null },
-    { id: 9, day: 'wednesday', url: null },
+    { id: 4, day: 'tuesday', url: null },
+    { id: 5, day: 'tuesday', url: null },
+    { id: 6, day: 'wednesday', url: null },
+    { id: 7, day: 'wednesday', url: null },
   ];
 
   function buildGalleryPublicUrl(storagePath) {
@@ -1615,7 +1673,17 @@ function initHome() {
     const saveHint = document.createElement('p');
     saveHint.className = 'photos-save-hint';
     saveHint.style.gridColumn = '1 / -1';
-    saveHint.textContent = t('photosSaveHint');
+
+    const saveHintIcon = document.createElement('span');
+    saveHintIcon.className = 'photos-save-hint__icon';
+    saveHintIcon.innerHTML = '<i data-lucide="lightbulb"></i>';
+
+    const saveHintText = document.createElement('span');
+    saveHintText.className = 'photos-save-hint__text';
+    saveHintText.textContent = t('photosSaveHint');
+
+    saveHint.appendChild(saveHintIcon);
+    saveHint.appendChild(saveHintText);
     photosGrid.appendChild(saveHint);
 
     photosWithUrl.forEach(photo => {
