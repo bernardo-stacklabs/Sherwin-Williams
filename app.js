@@ -1467,6 +1467,12 @@ function initHome() {
       return;
     }
 
+    const saveHint = document.createElement('p');
+    saveHint.className = 'photos-save-hint';
+    saveHint.style.gridColumn = '1 / -1';
+    saveHint.textContent = t('photosSaveHint');
+    photosGrid.appendChild(saveHint);
+
     photosWithUrl.forEach(photo => {
       const card = document.createElement('div');
       card.className = 'photo-card';
@@ -1475,70 +1481,7 @@ function initHome() {
         <div class="photo-image-wrapper">
           <img src="${photo.url}" alt="Foto ${photo.id}" class="photo-image" loading="lazy" />
         </div>
-        <button type="button" class="photo-share-btn" aria-label="Compartilhar">
-          <i data-lucide="corner-up-right"></i>
-        </button>
       `;
-
-      // LinkedIn Share Function
-      const btnShare = card.querySelector('.photo-share-btn');
-      btnShare.addEventListener('click', async (e) => {
-        e.stopPropagation();
-
-        const shareTitle = 'Convenção LATAM 2026';
-        const shareText = `Confira minha foto na Convenção LATAM 2026 da Sherwin-Williams! #ForgeAhead #SherwinWilliams`;
-
-        // Best effort: on iOS/Android, sharing the actual image file lets the LinkedIn app attach it.
-        // On desktop browsers, sharing files is often unsupported.
-        const tryShareImageFile = async () => {
-          if (!navigator.share) return false;
-
-          try {
-            let blob = null;
-
-            // Prefer Storage API download (more reliable than cross-origin fetch on iOS)
-            if (photo.storage_path) {
-              const client = await getSupabaseClient();
-              const { data, error } = await client.storage
-                .from(GALLERY_BUCKET)
-                .download(photo.storage_path);
-              if (error || !data) return false;
-              blob = data;
-            } else {
-              const resp = await fetch(photo.url, { cache: 'no-store', mode: 'cors' });
-              if (!resp.ok) return false;
-              blob = await resp.blob();
-            }
-
-            const fileName = photo.filename || `photo-${photo.id}`;
-            const mime = blob.type || (String(fileName).toLowerCase().endsWith('.jpg') || String(fileName).toLowerCase().endsWith('.jpeg') ? 'image/jpeg' : 'image/png');
-            const safeFileName = fileName.includes('.') ? fileName : `${fileName}${mime.includes('jpeg') ? '.jpg' : '.png'}`;
-            const file = new File([blob], safeFileName, { type: mime });
-
-            if (navigator.canShare && !navigator.canShare({ files: [file] })) return false;
-
-            await navigator.share({
-              title: shareTitle,
-              text: shareText,
-              files: [file],
-            });
-
-            return true;
-          } catch (err) {
-            // User cancel / not supported / permission issues.
-            return false;
-          }
-        };
-
-        const sharedFile = await tryShareImageFile();
-        if (sharedFile) return;
-
-        // If the browser can't share files, open the image and guide the user.
-        window.open(photo.url, '_blank');
-        if (typeof showToast === 'function') {
-          showToast('Seu navegador não conseguiu anexar a foto. Abra a imagem e use “Salvar imagem”/Compartilhar.');
-        }
-      });
 
       photosGrid.appendChild(card);
     });
