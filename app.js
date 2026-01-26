@@ -463,169 +463,191 @@ function initHome() {
         time: 'ALL DAY',
         titleKey: 'sunLeadershipArrivalsTitle',
         descriptionKey: 'sunLeadershipArrivalsDesc',
+        participants: 'Liderança LATAM, Marketing, Produto, P&D, Diretores de Vendas',
       },
     ],
     // SEG 26/01
     monday: [
       {
         id: 201,
-        time: '08:30 - 17:00',
+        time: '08h30 – 17h00',
         titleKey: 'monAlignmentTitle',
         locationKey: 'locChile',
         descriptionKey: 'monAlignmentDesc',
+        participants: 'Marketing LATAM, Produto LATAM, P&D, Diretores de Vendas',
       },
       {
         id: 202,
-        time: '16:00 - 18:00',
+        time: '16h00 – 18h00',
         titleKey: 'monArrivalsTitle',
         locationKey: 'locReception',
         descriptionKey: 'monArrivalsDesc',
+        participants: 'Todos os participantes',
       },
       {
         id: 203,
-        time: '18:30 - 22:00',
+        time: '18h30 – 22h00',
         titleKey: 'welcomeDrinkTitle',
         locationKey: 'locHallCosmo',
         descriptionKey: 'monWelcomeDesc',
+        participants: 'Todos os participantes',
       },
     ],
     // TER 27/01
     tuesday: [
       {
         id: 301,
-        time: '08:30 - 09:00',
+        time: '08h30 – 09h00',
         titleKey: 'tueOpeningTitle',
         locationKey: 'locSaoPaulo',
         descriptionKey: 'tueOpeningDesc',
+        participants: 'Todos os participantes',
       },
       {
         id: 302,
-        time: '09:00 - 10:00',
+        time: '09h00 – 10h00',
         titleKey: 'tueDojoTitle',
         locationKey: 'locSaoPaulo',
         descriptionKey: 'tueDojoDesc',
+        participants: 'Liderança Global e LATAM',
       },
       {
         id: 303,
-        time: '10:00 - 10:30',
+        time: '10h00 – 10h30',
         titleKey: 'tueFinanceTitle',
         locationKey: 'locSaoPaulo',
         descriptionKey: 'tueFinanceDesc',
       },
       {
         id: 304,
-        time: '10:30 - 11:00',
+        time: '10h30 – 11h00',
         titleKey: 'coffeeBreakTitle',
         locationKey: 'locPlenary',
         descriptionKey: 'tueCoffeeBreakDesc',
+        participants: 'Todos os participantes',
       },
       {
         id: 305,
-        time: '11:30 - 13:00',
+        time: '11h30 – 13h00',
         titleKey: 'tueSalesDirectorsPanelTitle',
         locationKey: 'locSaoPaulo',
         descriptionKey: 'tueSalesDirectorsPanelDesc',
+        participants: 'Diretores de Vendas, Liderança',
       },
       {
         id: 306,
-        time: '13:00 - 14:00',
+        time: '13h00 – 14h00',
         titleKey: 'lunchTitle',
         locationKey: 'locPedraBela',
         descriptionKey: 'tueLunchDesc',
+        participants: 'Todos os participantes',
       },
       {
         id: 307,
-        time: '14:00 - 14:30',
+        time: '14h00 – 14h30',
         titleKey: 'functionalCoatingsTitle',
         locationKey: 'locSaoPaulo',
         descriptionKey: 'tueFunctionalCoatingsDesc',
+        participants: 'Todos os participantes',
       },
       {
         id: 308,
-        time: '14:30 - 15:00',
+        time: '14h30 – 15h00',
         titleKey: 'tueHRTitle',
         locationKey: 'locSaoPaulo',
         descriptionKey: 'tueHRDesc',
+        participants: 'Todos os participantes',
       },
       {
         id: 309,
-        time: '15:00 - 15:30',
+        time: '15h00 – 15h30',
         titleKey: 'tueTechPMTitle',
         locationKey: 'locSaoPaulo',
         descriptionKey: 'tueTechPMDesc',
+        participants: 'Todos os participantes',
       },
       {
         id: 310,
-        time: '15:30 - 16:00',
+        time: '15h30 – 16h00',
         titleKey: 'coffeeBreakTitle',
         locationKey: 'locSaoPaulo',
         descriptionKey: 'tueCoffeeBreakDesc',
+        participants: 'Todos os participantes',
       },
       {
         id: 311,
-        time: '16:00 - 16:30',
+        time: '16h00 – 16h30',
         titleKey: 'salesExcellenceTitle',
         locationKey: 'locSaoPaulo',
         descriptionKey: 'tueSalesExcellenceDesc',
+        participants: 'Todos os participantes',
       },
       {
         id: 312,
-        time: '16:30 - 17:30',
+        time: '16h30 – 17h30',
         titleKey: 'tueSegmentMarketingTitle',
         locationKey: 'locSaoPaulo',
         descriptionKey: 'tueSegmentMarketingDesc',
+        participants: 'Todos os participantes',
       },
       {
         id: 313,
-        time: '17:30 - 17:40',
+        time: '17h30 – 17h40',
         titleKey: 'tueClosingTitle',
         locationKey: 'locSaoPaulo',
         descriptionKey: 'tueClosingDesc',
+        participants: 'Todos os participantes',
       },
       {
         id: 314,
-        time: '18:30 - 22:00',
+        time: '18h30 – 22h00',
         titleKey: 'tueDinnerTitle',
         locationKey: 'locFirehouse',
         descriptionKey: 'tueDinnerDesc',
+        participants: 'Todos os participantes',
       },
     ],
     // QUA 28/01
     wednesday: [
       {
         id: 401,
-        time: '08:30 - 09:00',
+        time: '08h30 – 09h00',
         titleKey: 'wedOpeningTitle',
         locationKey: 'locSaoPaulo',
         descriptionKey: 'wedOpeningDesc',
+        participants: 'Todos os participantes',
       },
       {
         id: 402,
-        time: '09:00 - 10:30',
+        time: '09h00 – 10h30',
         titleKey: 'wedInnovationTitle',
         locationKey: 'locManaus',
         descriptionKey: 'wedInnovationDesc',
+        participants: 'Todos os participantes',
       },
       {
         id: 403,
-        time: '10:30 - 11:00',
+        time: '10h30 – 11h00',
         titleKey: 'coffeeBreakTitle',
         locationKey: 'locManaus',
         descriptionKey: 'wedCoffeeBreakDesc',
+        participants: 'Todos os participantes',
       },
       {
         id: 404,
-        time: '12:00 - 13:00',
+        time: '12h00 – 13h00',
         titleKey: 'wedWrapUpTitle',
         locationKey: 'locPlenary',
         descriptionKey: 'wedWrapUpDesc',
+        participants: 'Todos os participantes',
       },
       {
         id: 405,
-        time: '14:00 - 17:00',
+        time: '14h00 – 17h00',
         titleKey: 'businessReviewMeetingTitle',
         locationKey: 'locChile',
         descriptionKey: 'wedBusinessReviewDesc',
+        participants: 'Liderança Global e LATAM',
       },
     ],
   };
@@ -813,6 +835,7 @@ function initHome() {
   const modalTime = document.querySelector('#modal-time');
   const modalLoc = document.querySelector('#modal-location');
   const modalDesc = document.querySelector('#modal-description');
+  const modalParticipants = document.querySelector('#modal-participants');
   const modalActions = document.querySelector('#modal-actions');
   const modalClose = document.querySelector('.modal-close');
 
@@ -835,6 +858,7 @@ function initHome() {
     if (modalTime) modalTime.style.display = 'block';
     if (modalLoc) modalLoc.style.display = 'block';
     if (modalDesc) modalDesc.style.display = 'block';
+    if (modalParticipants) modalParticipants.style.display = 'block';
     const existingProfileContainer = modal.querySelector('#modal-profile-content');
     if (existingProfileContainer) {
       existingProfileContainer.style.display = 'none';
@@ -846,6 +870,12 @@ function initHome() {
     modalTime.textContent = data.time || '';
     modalLoc.textContent = data.location ? `${t('labelLocation')}: ${data.location}` : '';
     modalDesc.textContent = data.description || '';
+    if (modalParticipants) {
+      modalParticipants.textContent = data.participants ? `${t('labelParticipants')}: ${data.participants}` : '';
+      if (!data.participants) {
+        modalParticipants.style.display = 'none';
+      }
+    }
     modalActions.innerHTML = '';
 
     // Action Buttons
@@ -876,6 +906,7 @@ function initHome() {
       modalTime.style.display = 'none';
       modalLoc.style.display = 'none';
       modalDesc.style.display = 'none';
+      if (modalParticipants) modalParticipants.style.display = 'none';
 
       // Use a custom container inside this modal (scoped) so it doesn't leak
       // across other dialogs/contexts.
@@ -948,6 +979,57 @@ function initHome() {
     } catch (_) {
       // no-op
     }
+  }
+
+  function parseSessionText(rawText) {
+    const text = (rawText || '').trim();
+    if (!text) return { description: '', participants: '' };
+
+    const participantMarkers = [
+      { marker: 'Quem participa:', stopMarkers: ['Obs.:', 'Observação:', 'Observacoes:', 'Observações:'] },
+      { marker: 'Who participates:', stopMarkers: ['Obs.:', 'Notes:', 'Note:'] },
+      { marker: 'Quién participa:', stopMarkers: ['Obs.:', 'Notas:', 'Nota:'] },
+      { marker: 'Quien participa:', stopMarkers: ['Obs.:', 'Notas:', 'Nota:'] },
+    ];
+
+    for (const { marker, stopMarkers } of participantMarkers) {
+      const idx = text.toLowerCase().indexOf(marker.toLowerCase());
+      if (idx === -1) continue;
+
+      const before = text.slice(0, idx).trim();
+      const after = text.slice(idx + marker.length).trim();
+
+      // Split "participants" from any trailing notes (e.g. "Obs.: ...")
+      let participantsChunk = after;
+      let trailing = '';
+      let earliestStopIdx = -1;
+
+      for (const stop of stopMarkers) {
+        const stopIdx = after.toLowerCase().indexOf(stop.toLowerCase());
+        if (stopIdx === -1) continue;
+        if (earliestStopIdx === -1 || stopIdx < earliestStopIdx) {
+          earliestStopIdx = stopIdx;
+        }
+      }
+
+      if (earliestStopIdx !== -1) {
+        participantsChunk = after.slice(0, earliestStopIdx).trim();
+        trailing = after.slice(earliestStopIdx).trim();
+      }
+
+      // If participants ends with a sentence terminator, drop it.
+      participantsChunk = participantsChunk.replace(/^[\s\-–—:]+/, '').replace(/[\s\.]+$/, '').trim();
+
+      // Remove the participants portion from the description to avoid duplication.
+      let description = [before, trailing].filter(Boolean).join(' ').trim();
+      if (!description) {
+        description = trailing || '';
+      }
+
+      return { description, participants: participantsChunk };
+    }
+
+    return { description: text, participants: '' };
   }
 
   // --- RENDER FUNCTIONS ---
@@ -1030,13 +1112,19 @@ function initHome() {
       return 'now';
     }
 
-    // Parse de horários "HH:MM - HH:MM"
-    const [startStr, endStr] = timeStr.split(' - ');
+    // Parse de horários (aceita "HH:MM - HH:MM", "08h30 – 17h00", etc.)
+    const normalizedRange = String(timeStr)
+      .replace(/[\u2013\u2014]/g, '-') // en dash/em dash
+      .replace(/\s*–\s*/g, '-')
+      .trim();
+
+    const parts = normalizedRange.split(/\s*-\s*/).filter(Boolean);
+    const [startStr, endStr] = parts;
     if (!startStr) return null;
 
     const normalizeTime = (str) => {
       // Aceita "9h00" ou "09:00" e converte para números
-      const clean = str.replace('h', ':');
+      const clean = String(str).trim().toLowerCase().replace('h', ':');
       const [h, m] = clean.split(':');
       return [Number(h), Number(m || 0)];
     };
@@ -1067,6 +1155,56 @@ function initHome() {
     return null;
   }
 
+  const EVENT_YEAR = 2026;
+  const EVENT_MONTH_INDEX = 0; // Janeiro = 0 no JS
+  const agendaDayOfMonthMap = {
+    sunday: 25,
+    monday: 26,
+    tuesday: 27,
+    wednesday: 28,
+  };
+
+  function getDefaultAgendaDay() {
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+    // If we're not in the event month/year, fall back to Monday (legacy default).
+    if (today.getFullYear() !== EVENT_YEAR || today.getMonth() !== EVENT_MONTH_INDEX) {
+      return 'monday';
+    }
+
+    const entries = Object.entries(agendaDayOfMonthMap)
+      .map(([dayKey, dayOfMonth]) => ({ dayKey, date: new Date(EVENT_YEAR, EVENT_MONTH_INDEX, dayOfMonth) }))
+      .sort((a, b) => a.date - b.date);
+
+    // Exact match
+    for (const entry of entries) {
+      if (today.getTime() === entry.date.getTime()) return entry.dayKey;
+    }
+
+    // Before event: first day; after event: last day
+    if (today < entries[0].date) return entries[0].dayKey;
+    if (today > entries[entries.length - 1].date) return entries[entries.length - 1].dayKey;
+
+    // During event but not matching a tab day (shouldn't happen): choose closest future day.
+    for (const entry of entries) {
+      if (today < entry.date) return entry.dayKey;
+    }
+
+    return 'monday';
+  }
+
+  function setActiveAgendaDay(day) {
+    if (!day || !agendaByDay[day]) return;
+    activeDay = day;
+    dayPills.forEach((p) => {
+      const isActive = p.dataset.day === day;
+      p.classList.toggle('is-active', isActive);
+      p.setAttribute('aria-selected', isActive ? 'true' : 'false');
+    });
+    renderSchedule(day);
+  }
+
   function renderSchedule(day) {
     if (!scheduleList) return;
     const sessions = agendaByDay[day] || [];
@@ -1086,6 +1224,32 @@ function initHome() {
       const sessionDescription = session.descriptionKey
         ? t(session.descriptionKey)
         : (session.description || t(`session${session.id}Desc`) || 'Descrição da atividade indisponível no momento.');
+
+      // Modal content priority:
+      // 1) explicit session fields (description/participants)
+      // 2) i18n descriptionKey
+      // 3) legacy detailed i18n session{ID}Desc (operational script)
+      // 4) computed sessionDescription fallback
+      const detailedDescKey = `session${session.id}Desc`;
+      const detailedDescCandidate = t(detailedDescKey);
+      const hasDetailedDesc = detailedDescCandidate && detailedDescCandidate !== detailedDescKey;
+
+      const explicitDescription = session.modalDescriptionKey
+        ? t(session.modalDescriptionKey)
+        : (session.modalDescription || session.description || '');
+      const explicitParticipants = session.participantsKey
+        ? t(session.participantsKey)
+        : (session.participants || '');
+
+      const rawModalText = explicitDescription
+        ? explicitDescription
+        : (session.descriptionKey
+          ? t(session.descriptionKey)
+          : (hasDetailedDesc ? detailedDescCandidate : sessionDescription));
+
+      const parsed = explicitParticipants
+        ? { description: rawModalText, participants: explicitParticipants }
+        : parseSessionText(rawModalText);
 
       const metaHtml = sessionLocation
         ? `
@@ -1123,6 +1287,31 @@ function initHome() {
         ${metaHtml}
       `;
 
+      // Re-activate click on Agenda items to show details.
+      article.classList.add('is-clickable');
+      article.tabIndex = 0;
+      article.setAttribute('role', 'button');
+      article.setAttribute('aria-label', `${sessionTitle}. ${timeLabel}`);
+
+      const openSession = () => {
+        openModal({
+          type: 'session',
+          title: sessionTitle,
+          time: timeLabel,
+          location: sessionLocation,
+          description: parsed.description || sessionDescription,
+          participants: parsed.participants || '',
+        });
+      };
+
+      article.addEventListener('click', openSession);
+      article.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          openSession();
+        }
+      });
+
       scheduleList.appendChild(article);
     });
     refreshIcons(); // Render icons for the new list
@@ -1147,7 +1336,8 @@ function initHome() {
   // Mínimo dinâmico (fit-to-width): o menor zoom é o que faz a imagem preencher a largura
   // do container. Assim o zoom-out sempre volta para a visão "largura total".
   let MIN_ZOOM = 0.4;
-  const MAX_ZOOM = 1.0; // não ultrapassar 100%
+  // Permite upscale (útil quando a imagem é menor que o container).
+  const MAX_ZOOM = 6.0;
   const ZOOM_STEP = 0.05; // 5%
 
   const canvas = document.querySelector('#pdf-render');
@@ -1312,19 +1502,14 @@ function initHome() {
 
   renderNotices();
 
-  let activeDay = document.querySelector('.day-tabs:not(.photo-tabs) .day-pill.is-active')?.dataset?.day || 'monday';
-  renderSchedule(activeDay);
+  let activeDay = getDefaultAgendaDay();
+  setActiveAgendaDay(activeDay);
 
   dayPills.forEach((pill) => {
     pill.addEventListener('click', () => {
       const day = pill.dataset.day;
       if (!day || day === activeDay) return;
-      activeDay = day;
-      dayPills.forEach((p) => {
-        p.classList.toggle('is-active', p === pill);
-        p.setAttribute('aria-selected', p === pill ? 'true' : 'false');
-      });
-      renderSchedule(day);
+      setActiveAgendaDay(day);
     });
   });
 
@@ -1566,6 +1751,11 @@ function initHome() {
 
       // Update Header
       updateHeader(target);
+
+      // Always keep Agenda focused on "today" when entering that tab.
+      if (target === 'agenda') {
+        setActiveAgendaDay(getDefaultAgendaDay());
+      }
     });
   });
 
