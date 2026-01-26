@@ -451,432 +451,181 @@ function initHome() {
 
   // Dados da home (Keys map to i18n)
   const importantNotices = [
-    { id: 1, textKey: 'notice2' },
-    { id: 2, textKey: 'notice3' },
+    { id: 1, icon: 'user-check', titleKey: 'noticeCheckinTitle', descKey: 'noticeCheckinDesc' },
+    { id: 2, icon: 'glass-water', titleKey: 'noticeWelcomeDrinkTitle', descKey: 'noticeWelcomeDrinkDesc' },
   ];
 
   const agendaByDay = {
+    // DOM 25/01
+    sunday: [
+      {
+        id: 101,
+        time: 'ALL DAY',
+        titleKey: 'sunLeadershipArrivalsTitle',
+        descriptionKey: 'sunLeadershipArrivalsDesc',
+      },
+    ],
     // SEG 26/01
-    // Calendário de segunda (staff / produção) conforme planilha
     monday: [
       {
         id: 201,
-        time: '08:20 - 08:30',
-        titleKey: 'mcTitle',
-        locationKey: 'locChilePeru',
-        descriptionKey: 'session201Desc',
+        time: '08:30 - 17:00',
+        titleKey: 'monAlignmentTitle',
+        locationKey: 'locChile',
+        descriptionKey: 'monAlignmentDesc',
       },
       {
         id: 202,
-        time: '08:30 - 19:00',
-        titleKey: 'regionalAlignmentMeetingTitle',
-        locationKey: 'locChilePeru',
-        descriptionKey: 'session202Desc',
+        time: '16:00 - 18:00',
+        titleKey: 'monArrivalsTitle',
+        locationKey: 'locReception',
+        descriptionKey: 'monArrivalsDesc',
       },
       {
         id: 203,
-        time: '19:00 - 19:10',
-        titleKey: 'mcTitle',
-        locationKey: 'locChilePeru',
-        descriptionKey: 'session203Desc',
-      },
-      {
-        id: 204,
-        time: '10:30 - 11:00',
-        titleKey: 'coffeeBreakTitle',
-        locationKey: 'locHallChilePeru',
-        descriptionKey: 'session204Desc',
-      },
-      {
-        id: 205,
-        time: '11:00 - 11:10',
-        titleKey: 'mcTitle',
-        locationKey: 'locChilePeru',
-        descriptionKey: 'session205Desc',
-      },
-      {
-        id: 206,
-        time: '12:00 - 13:00',
-        titleKey: 'lunchTitle',
-        locationKey: 'locPedraBela',
-        descriptionKey: 'session206Desc',
-      },
-      {
-        id: 207,
-        time: '13:00 - 14:00',
-        titleKey: 'mcRehearsalTitle',
-        locationKey: 'locPlenarySaoPaulo',
-        descriptionKey: 'session207Desc',
-      },
-      {
-        id: 208,
-        time: '14:00 - 15:00',
-        titleKey: 'globalLeadersRehearsalTitle',
-        locationKey: 'locPlenarySaoPaulo',
-        descriptionKey: 'session208Desc',
-      },
-      {
-        id: 209,
-        time: '15:30 - 16:00',
-        titleKey: 'executivesCoffeeBreakTitle',
-        locationKey: 'locHallChilePeru',
-        descriptionKey: 'session209Desc',
-      },
-      {
-        id: 210,
-        time: '16:00 - 16:10',
-        titleKey: 'mcTitle',
-        locationKey: 'locHallChilePeru',
-        descriptionKey: 'session210Desc',
-      },
-      {
-        id: 211,
         time: '18:30 - 22:00',
         titleKey: 'welcomeDrinkTitle',
         locationKey: 'locHallCosmo',
-        descriptionKey: 'session211Desc',
-      },
-      {
-        id: 212,
-        time: '22:00 - 22:10',
-        titleKey: 'mcTitle',
-        locationKey: 'locHallCosmo',
-        descriptionKey: 'session212Desc',
+        descriptionKey: 'monWelcomeDesc',
       },
     ],
     // TER 27/01
     tuesday: [
       {
         id: 301,
-        time: '08:20 - 08:30',
-        titleKey: 'mcTitle',
-        locationKey: 'locPlenarySaoPaulo',
-        descriptionKey: 'session301Desc',
+        time: '08:30 - 09:00',
+        titleKey: 'tueOpeningTitle',
+        locationKey: 'locSaoPaulo',
+        descriptionKey: 'tueOpeningDesc',
       },
       {
         id: 302,
-        time: '08:30 - 08:32',
-        titleKey: 'openMeetingTitle',
-        locationKey: 'locPlenarySaoPaulo',
-        descriptionKey: 'session302Desc',
+        time: '09:00 - 10:00',
+        titleKey: 'tueDojoTitle',
+        locationKey: 'locSaoPaulo',
+        descriptionKey: 'tueDojoDesc',
       },
       {
         id: 303,
-        time: '08:32 - 08:35',
-        titleKey: 'openMeetingTitle',
-        locationKey: 'locPlenarySaoPaulo',
-        descriptionKey: 'session303Desc',
+        time: '10:00 - 10:30',
+        titleKey: 'tueFinanceTitle',
+        locationKey: 'locSaoPaulo',
+        descriptionKey: 'tueFinanceDesc',
       },
       {
         id: 304,
-        time: '08:35 - 08:38',
-        titleKey: 'mcTitle',
-        locationKey: 'locPlenarySaoPaulo',
-        descriptionKey: 'session304Desc',
+        time: '10:30 - 11:00',
+        titleKey: 'coffeeBreakTitle',
+        locationKey: 'locPlenary',
+        descriptionKey: 'tueCoffeeBreakDesc',
       },
       {
         id: 305,
-        time: '08:38 - 08:45',
-        titleKey: 'openMeetingTitle',
-        locationKey: 'locPlenarySaoPaulo',
-        descriptionKey: 'session305Desc',
+        time: '11:30 - 13:00',
+        titleKey: 'tueSalesDirectorsPanelTitle',
+        locationKey: 'locSaoPaulo',
+        descriptionKey: 'tueSalesDirectorsPanelDesc',
       },
       {
         id: 306,
-        time: '08:45 - 09:00',
-        titleKey: 'mcTitle',
-        locationKey: 'locPlenarySaoPaulo',
-        descriptionKey: 'session306Desc',
-      },
-      {
-        id: 307,
-        time: '09:00 - 10:00',
-        titleKey: 'globalPerspectiveTitle',
-        locationKey: 'locPlenarySaoPaulo',
-        descriptionKey: 'session307Desc',
-      },
-      {
-        id: 308,
-        time: '10:00 - 10:05',
-        titleKey: 'mcTitle',
-        locationKey: 'locPlenarySaoPaulo',
-        descriptionKey: 'session308Desc',
-      },
-      {
-        id: 309,
-        time: '10:00 - 10:30',
-        titleKey: 'financeOverviewTitle',
-        locationKey: 'locPlenarySaoPaulo',
-        descriptionKey: 'session309Desc',
-      },
-      {
-        id: 310,
-        time: '10:30 - 10:35',
-        titleKey: 'mcTitle',
-        locationKey: 'locPlenarySaoPaulo',
-        descriptionKey: 'session310Desc',
-      },
-      {
-        id: 311,
-        time: '10:30 - 11:00',
-        titleKey: 'coffeeBreakTitle',
-        locationKey: 'locPlenarySaoPaulo',
-        descriptionKey: 'session311Desc',
-      },
-      {
-        id: 312,
-        time: '11:00 - 11:05',
-        titleKey: 'mcTitle',
-        locationKey: 'locPlenarySaoPaulo',
-        descriptionKey: 'session312Desc',
-      },
-      {
-        id: 313,
-        time: '11:00 - 13:00',
-        titleKey: 'leadershipSalesDirectorPanelTitle',
-        locationKey: 'locPlenarySaoPaulo',
-        descriptionKey: 'session313Desc',
-      },
-      {
-        id: 314,
-        time: '13:00 - 13:05',
-        titleKey: 'mcTitle',
-        locationKey: 'locPlenarySaoPaulo',
-        descriptionKey: 'session314Desc',
-      },
-      {
-        id: 315,
         time: '13:00 - 14:00',
         titleKey: 'lunchTitle',
         locationKey: 'locPedraBela',
-        descriptionKey: 'session315Desc',
+        descriptionKey: 'tueLunchDesc',
       },
       {
-        id: 316,
-        time: '14:00 - 14:05',
-        titleKey: 'mcTitle',
-        locationKey: 'locPlenarySaoPaulo',
-        descriptionKey: 'session316Desc',
-      },
-      {
-        id: 317,
+        id: 307,
         time: '14:00 - 14:30',
         titleKey: 'functionalCoatingsTitle',
-        locationKey: 'locPlenarySaoPaulo',
-        descriptionKey: 'session317Desc',
+        locationKey: 'locSaoPaulo',
+        descriptionKey: 'tueFunctionalCoatingsDesc',
       },
       {
-        id: 318,
-        time: '14:30 - 14:35',
-        titleKey: 'mcTitle',
-        locationKey: 'locPlenarySaoPaulo',
-        descriptionKey: 'session318Desc',
-      },
-      {
-        id: 319,
+        id: 308,
         time: '14:30 - 15:00',
-        titleKey: 'hrTitle',
-        locationKey: 'locPlenarySaoPaulo',
-        descriptionKey: 'session319Desc',
+        titleKey: 'tueHRTitle',
+        locationKey: 'locSaoPaulo',
+        descriptionKey: 'tueHRDesc',
       },
       {
-        id: 320,
-        time: '15:00 - 15:05',
-        titleKey: 'mcTitle',
-        locationKey: 'locPlenarySaoPaulo',
-        descriptionKey: 'session320Desc',
-      },
-      {
-        id: 321,
+        id: 309,
         time: '15:00 - 15:30',
-        titleKey: 'technicalProductManagementTitle',
-        locationKey: 'locPlenarySaoPaulo',
-        descriptionKey: 'session321Desc',
+        titleKey: 'tueTechPMTitle',
+        locationKey: 'locSaoPaulo',
+        descriptionKey: 'tueTechPMDesc',
       },
       {
-        id: 322,
-        time: '15:30 - 15:35',
-        titleKey: 'mcTitle',
-        locationKey: 'locPlenarySaoPaulo',
-        descriptionKey: 'session322Desc',
-      },
-      {
-        id: 323,
+        id: 310,
         time: '15:30 - 16:00',
         titleKey: 'coffeeBreakTitle',
-        locationKey: 'locPlenarySaoPaulo',
-        descriptionKey: 'session323Desc',
+        locationKey: 'locSaoPaulo',
+        descriptionKey: 'tueCoffeeBreakDesc',
       },
       {
-        id: 324,
-        time: '16:00 - 16:05',
-        titleKey: 'mcTitle',
-        locationKey: 'locPlenarySaoPaulo',
-        descriptionKey: 'session324Desc',
-      },
-      {
-        id: 325,
+        id: 311,
         time: '16:00 - 16:30',
         titleKey: 'salesExcellenceTitle',
-        locationKey: 'locPlenarySaoPaulo',
-        descriptionKey: 'session325Desc',
+        locationKey: 'locSaoPaulo',
+        descriptionKey: 'tueSalesExcellenceDesc',
       },
       {
-        id: 326,
-        time: '16:30 - 16:35',
-        titleKey: 'mcTitle',
-        locationKey: 'locPlenarySaoPaulo',
-        descriptionKey: 'session326Desc',
-      },
-      {
-        id: 327,
+        id: 312,
         time: '16:30 - 17:30',
-        titleKey: 'marketSegmentStrategyMarcomTitle',
-        locationKey: 'locPlenarySaoPaulo',
-        descriptionKey: 'session327Desc',
+        titleKey: 'tueSegmentMarketingTitle',
+        locationKey: 'locSaoPaulo',
+        descriptionKey: 'tueSegmentMarketingDesc',
       },
       {
-        id: 328,
-        time: '17:30 - 17:31',
-        titleKey: 'mcTitle',
-        locationKey: 'locPlenarySaoPaulo',
-        descriptionKey: 'session328Desc',
-      },
-      {
-        id: 329,
+        id: 313,
         time: '17:30 - 17:40',
-        titleKey: 'closingDayOutlookTitle',
-        locationKey: 'locPlenarySaoPaulo',
-        descriptionKey: 'session329Desc',
+        titleKey: 'tueClosingTitle',
+        locationKey: 'locSaoPaulo',
+        descriptionKey: 'tueClosingDesc',
       },
       {
-        id: 330,
-        time: '17:40 - 17:45',
-        titleKey: 'mcTitle',
-        locationKey: 'locPlenarySaoPaulo',
-        descriptionKey: 'session330Desc',
-      },
-      {
-        id: 331,
-        time: '17:40 - 18:00',
-        titleKey: 'breakPreparationCeremonyTitle',
-        locationKey: 'locPlenarySaoPaulo',
-        descriptionKey: 'session331Desc',
+        id: 314,
+        time: '18:30 - 22:00',
+        titleKey: 'tueDinnerTitle',
+        locationKey: 'locFirehouse',
+        descriptionKey: 'tueDinnerDesc',
       },
     ],
     // QUA 28/01
     wednesday: [
       {
         id: 401,
-        time: '08:20 - 08:30',
-        titleKey: 'mcTitle',
-        locationKey: 'locPlenarySaoPaulo',
-        descriptionKey: 'session401Desc',
+        time: '08:30 - 09:00',
+        titleKey: 'wedOpeningTitle',
+        locationKey: 'locSaoPaulo',
+        descriptionKey: 'wedOpeningDesc',
       },
       {
         id: 402,
-        time: '08:30 - 08:40',
-        titleKey: 'openMeetingTitle',
-        locationKey: 'locPlenarySaoPaulo',
-        descriptionKey: 'session402Desc',
+        time: '09:00 - 10:30',
+        titleKey: 'wedInnovationTitle',
+        locationKey: 'locManaus',
+        descriptionKey: 'wedInnovationDesc',
       },
       {
         id: 403,
-        time: '08:40 - 09:00',
-        titleKey: 'mcTitle',
-        locationKey: 'locPlenarySaoPaulo',
-        descriptionKey: 'session403Desc',
+        time: '10:30 - 11:00',
+        titleKey: 'coffeeBreakTitle',
+        locationKey: 'locManaus',
+        descriptionKey: 'wedCoffeeBreakDesc',
       },
       {
         id: 404,
-        time: '09:00 - 10:30',
-        titleKey: 'innovationSessionTitle',
-        locationKey: 'locManaus',
-        descriptionKey: 'session404Desc',
+        time: '12:00 - 13:00',
+        titleKey: 'wedWrapUpTitle',
+        locationKey: 'locPlenary',
+        descriptionKey: 'wedWrapUpDesc',
       },
       {
         id: 405,
-        time: '10:30 - 10:35',
-        titleKey: 'mcTitle',
-        locationKey: 'locManaus',
-        descriptionKey: 'session405Desc',
-      },
-      {
-        id: 406,
-        time: '10:30 - 11:00',
-        titleKey: 'breakTitle',
-        locationKey: 'locPlenarySaoPaulo',
-        descriptionKey: 'session406Desc',
-      },
-      {
-        id: 407,
-        time: '11:00 - 11:30',
-        titleKey: 'mcTitle',
-        locationKey: 'locPlenarySaoPaulo',
-        descriptionKey: 'session407Desc',
-      },
-      {
-        id: 408,
-        time: '11:30 - 12:00',
-        titleKey: 'finalGameTitle',
-        locationKey: 'locPlenarySaoPaulo',
-        descriptionKey: 'session408Desc',
-      },
-      {
-        id: 409,
-        time: '12:00 - 12:05',
-        titleKey: 'mcTitle',
-        locationKey: 'locPlenarySaoPaulo',
-        descriptionKey: 'session409Desc',
-      },
-      {
-        id: 410,
-        time: '12:00 - 13:00',
-        titleKey: 'wrapUpFinalMessageTitle',
-        locationKey: 'locPlenarySaoPaulo',
-        descriptionKey: 'session410Desc',
-      },
-      {
-        id: 411,
-        time: '13:00 - 13:05',
-        titleKey: 'mcTitle',
-        locationKey: 'locPlenarySaoPaulo',
-        descriptionKey: 'session411Desc',
-      },
-      {
-        id: 412,
-        time: '13:00 - 13:30',
-        titleKey: 'latamCheckoutDeparturesTitle',
-        locationKey: 'locPlenarySaoPaulo',
-        descriptionKey: 'session412Desc',
-      },
-      {
-        id: 413,
-        time: '13:00 - 14:00',
-        titleKey: 'lunchTitle',
-        locationKey: 'locPedraBela',
-        descriptionKey: 'session413Desc',
-      },
-      {
-        id: 414,
-        time: '14:00 - 14:05',
-        titleKey: 'mcTitle',
-        locationKey: 'locChilePeru',
-        descriptionKey: 'session414Desc',
-      },
-      {
-        id: 415,
         time: '14:00 - 17:00',
         titleKey: 'businessReviewMeetingTitle',
-        locationKey: 'locChilePeru',
-        descriptionKey: 'session415Desc',
-      },
-      {
-        id: 416,
-        time: '18:30',
-        titleKey: 'awardsDinnerTitle',
-        location: '',
-        descriptionKey: 'session416Desc',
+        locationKey: 'locChile',
+        descriptionKey: 'wedBusinessReviewDesc',
       },
     ],
   };
@@ -1212,7 +961,17 @@ function initHome() {
       const article = document.createElement('article');
       article.className = 'announcement-card';
       // article.style.cursor = 'pointer'; // Removed clickable indication indicating
-      article.innerHTML = `<p>${t(notice.textKey)}</p>`;
+      const title = notice.titleKey ? t(notice.titleKey) : '';
+      const desc = notice.descKey ? t(notice.descKey) : '';
+      const icon = notice.icon || 'bell';
+
+      article.innerHTML = `
+        <div class="announcement-header">
+          <span class="announcement-icon" aria-hidden="true"><i data-lucide="${icon}"></i></span>
+          <h3 class="announcement-title">${title}</h3>
+        </div>
+        <p class="announcement-desc">${desc}</p>
+      `;
 
       // Click event for modal removed
       /*
@@ -1227,6 +986,8 @@ function initHome() {
 
       noticesContainer.appendChild(article);
     });
+
+    refreshIcons();
   }
 
 
@@ -1326,6 +1087,17 @@ function initHome() {
         ? t(session.descriptionKey)
         : (session.description || t(`session${session.id}Desc`) || 'Descrição da atividade indisponível no momento.');
 
+      const metaHtml = sessionLocation
+        ? `
+        <div class="session-meta">
+          <span class="session-meta-icon" aria-hidden="true">
+            <i data-lucide="map-pin"></i>
+          </span>
+          <span>${sessionLocation}</span>
+        </div>
+      `
+        : '';
+
       const article = document.createElement('article');
       article.className = 'session-card';
 
@@ -1340,18 +1112,15 @@ function initHome() {
           ? `<span class="session-status session-status-next">${t('next')}</span>`
           : ''; // No tag for finished, just styling
 
+      const timeLabel = session.time === 'ALL DAY' ? t('allDay') : session.time;
+
       article.innerHTML = `
         <div class="session-header">
-          <span class="session-time">${session.time}</span>
+          <span class="session-time">${timeLabel}</span>
           ${statusHtml}
         </div>
         <h3 class="session-title">${sessionTitle}</h3>
-        <div class="session-meta">
-          <span class="session-meta-icon" aria-hidden="true">
-            <i data-lucide="map-pin"></i>
-          </span>
-          <span>${sessionLocation}</span>
-        </div>
+        ${metaHtml}
       `;
 
       scheduleList.appendChild(article);
