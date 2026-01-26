@@ -1,4 +1,4 @@
-const CACHE_NAME = 'sw-latam-2026-v31';
+const CACHE_NAME = 'sw-latam-2026-v32';
 
 // Minimal app-shell cache for true PWA behavior (offline + fast reload)
 // Note: the app uses cache-busting querystrings (?v=2). We handle that in fetch
@@ -9,6 +9,7 @@ const ASSETS_TO_CACHE = [
   './app.html',
   './styles.css',
   './app.js',
+  './locales.js',
   './manifest.webmanifest',
   './icons/icon-192.svg',
   './icons/icon-512.svg',
@@ -77,26 +78,35 @@ self.addEventListener('fetch', (event) => {
   // Same-origin static assets -> cache-first (ignore ?v= cache-busting)
   if (isSameOrigin) {
     event.respondWith(
-      caches
-        .match(request, { ignoreSearch: true })
-        .then((cachedResponse) => {
-          if (cachedResponse) return cachedResponse;
+      (async () => {
+        const cache = await caches.open(CACHE_NAME);
 
-          return fetch(request)
-            .then((response) => {
-              // Cache successful basic responses only
-              if (response && response.ok && response.type === 'basic') {
-                const copy = response.clone();
-                caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
-              }
-              return response;
-            })
-            .catch(async () => {
-              // Don't return HTML for JS/CSS/image requests.
-              // If we don't have it cached, fail fast.
-              return caches.match(request, { ignoreSearch: true });
-            });
-        })
+        // Normalize cache key to ignore querystrings (e.g. ?v=2),
+        // but still allow the network request to update the cached entry.
+        const urlNoSearch = new URL(request.url);
+        urlNoSearch.search = '';
+        const cacheKey = new Request(urlNoSearch.toString(), { method: 'GET' });
+
+        const cachedResponse = await cache.match(cacheKey);
+
+        const networkPromise = fetch(request)
+          .then((response) => {
+            if (response && response.ok && response.type === 'basic') {
+              cache.put(cacheKey, response.clone()).catch(() => { });
+            }
+            return response;
+          })
+          .catch(() => null);
+
+        // Stale-while-revalidate: return cache immediately, update in background.
+        if (cachedResponse) {
+          event.waitUntil(networkPromise);
+          return cachedResponse;
+        }
+
+        const networkResponse = await networkPromise;
+        return networkResponse || (await cache.match(cacheKey));
+      })()
     );
     return;
   }

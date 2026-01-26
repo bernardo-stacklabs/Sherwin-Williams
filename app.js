@@ -1328,8 +1328,6 @@ function initHome() {
 
       const article = document.createElement('article');
       article.className = 'session-card';
-      // Make it interactive
-      article.style.cursor = 'pointer';
 
       // Apply finished class if needed
       if (realStatus === 'finished') {
@@ -1356,17 +1354,6 @@ function initHome() {
         </div>
       `;
 
-      // Click event for modal
-      article.addEventListener('click', () => {
-        openModal({
-          type: 'session',
-          title: sessionTitle,
-          time: session.time,
-          location: sessionLocation,
-          description: sessionDescription,
-        });
-      });
-
       scheduleList.appendChild(article);
     });
     refreshIcons(); // Render icons for the new list
@@ -1374,14 +1361,13 @@ function initHome() {
 
   // --- MAP LOGIC ---
   const locationsData = [
-    // Parte superior do mapa (Plenária / Restaurante)
-    { titleKey: 'locPlenary', descKey: 'locPlenaryDesc', icon: 'mic-2', x: 0, y: 0 },
-    { titleKey: 'locRest', descKey: 'locRestDesc', icon: 'utensils', x: 0, y: 0 },
-    // Parte central/abaixo (Check-in / Guarda-volumes / Chegada / Welcome Drink)
-    { titleKey: 'locCheckin', descKey: 'locCheckinDesc', icon: 'user-check', x: 1, y: 0.50 },
-    { titleKey: 'locLuggage', descKey: 'locLuggageDesc', icon: 'briefcase', x: 1, y: 0.70 },
-    { titleKey: 'locArrival', descKey: 'locArrivalDesc', icon: 'map-pin', x: 1, y: 0.65 },
-    { titleKey: 'locWelcome', descKey: 'locWelcomeDesc', icon: 'glass-water', x: 1, y: 0.70 },
+    // Coordenadas normalizadas (0-1). Estão aproximadas e podem ser ajustadas.
+    { titleKey: 'locWelcome', descKey: 'locWelcomeDesc', icon: 'glass-water', x: 0.18, y: 0.12 },
+    { titleKey: 'awardsDinnerTitle', descKey: 'locAwardsDinnerDesc', icon: 'award', x: 0.28, y: 0.22 },
+    { titleKey: 'locCheckin', descKey: 'locCheckinDesc', icon: 'user-check', x: 0.68, y: 0.55 },
+    { titleKey: 'locRest', descKey: 'locRestDesc', icon: 'utensils', x: 0.30, y: 0.65 },
+    { titleKey: 'locLuggage', descKey: 'locLuggageDesc', icon: 'briefcase', x: 0.60, y: 0.76 },
+    { titleKey: 'locPlenary', descKey: 'locPlenaryDesc', icon: 'mic-2', x: 0.60, y: 0.83 },
   ];
 
   // Map Vars
