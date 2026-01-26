@@ -1,6 +1,6 @@
 export const i18n = {
     pt: {
-        homeTitle: 'Convenção LATAM',
+        homeTitle: 'Kick-Off Meeting Sherwin Willians',
         homeDate: '25-29 de Janeiro, 2026',
         noticesTitle: 'Avisos Importantes',
         agendaTitle: 'Agenda',
@@ -292,7 +292,7 @@ export const i18n = {
         USA: 'EUA',
     },
     es: {
-        homeTitle: 'Convención LATAM',
+        homeTitle: 'Kick-Off Meeting Sherwin Willians',
         homeDate: '25-29 de Enero, 2026',
         noticesTitle: 'Avisos Importantes',
         agendaTitle: 'Agenda',
@@ -584,7 +584,7 @@ export const i18n = {
         USA: 'EUA',
     },
     en: {
-        homeTitle: 'LATAM Convention',
+        homeTitle: 'Kick-Off Meeting Sherwin Willians',
         homeDate: 'January 25-29, 2026',
         noticesTitle: 'Important Notices',
         agendaTitle: 'Schedule',

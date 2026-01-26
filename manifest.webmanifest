@@ -1,11 +1,11 @@
 {
-  "name": "Convenção LATAM 2026",
-  "short_name": "SW LATAM",
+  "name": "Kick-Off Sherwin Willians",
+  "short_name": "Kick-Off",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#14100c",
   "theme_color": "#f5a623",
-  "description": "App web da Convenção LATAM 2026 Sherwin-Williams.",
+  "description": "App web do Kick-Off Meeting Sherwin Willians.",
   "icons": [
     {
       "src": "./icons/icon-192.svg",

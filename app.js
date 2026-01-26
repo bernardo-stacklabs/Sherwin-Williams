@@ -1144,7 +1144,9 @@ function initHome() {
   let mapLoaded = false;
   let scale = 0.4; // 40% padrão
   const BASE_ZOOM = 0.4;
-  const MIN_ZOOM = 0.4; // mínimo 40%
+  // Mínimo dinâmico (fit-to-width): o menor zoom é o que faz a imagem preencher a largura
+  // do container. Assim o zoom-out sempre volta para a visão "largura total".
+  let MIN_ZOOM = 0.4;
   const MAX_ZOOM = 1.0; // não ultrapassar 100%
   const ZOOM_STEP = 0.05; // 5%
 
@@ -1152,6 +1154,19 @@ function initHome() {
   const ctx = canvas?.getContext('2d');
   const canvasWrapper = document.querySelector('.canvas-wrapper');
   const zoomIndicator = document.querySelector('.zoom-indicator');
+
+  function computeFitScale() {
+    if (!canvasWrapper || !mapImage?.width) return BASE_ZOOM;
+    const containerWidth = canvasWrapper.clientWidth;
+    if (!containerWidth) return BASE_ZOOM;
+    return containerWidth / mapImage.width;
+  }
+
+  function updateMinZoom() {
+    // Clamp para evitar valores inválidos e respeitar o máximo.
+    const fit = computeFitScale();
+    MIN_ZOOM = Math.min(MAX_ZOOM, Math.max(0.1, fit));
+  }
 
   function renderMap() {
     if (!ctx || !mapLoaded) return;
@@ -1228,23 +1243,9 @@ function initHome() {
     mapImage.onload = () => {
       mapLoaded = true;
 
-      // Fit Width Logic
-      if (canvasWrapper) {
-        // Calculate scale to fit the wrapper width
-        // We subtract a small buffer (e.g. 1px) to avoid rounding pixel scroll issues
-        const containerWidth = canvasWrapper.clientWidth;
-
-        if (containerWidth > 0) {
-          scale = containerWidth / mapImage.width;
-        } else {
-          // Fallback if hidden
-          scale = BASE_ZOOM;
-        }
-
-        // Update MIN_ZOOM constraint logic if needed would go here
-      } else {
-        scale = BASE_ZOOM;
-      }
+      // Fit-to-width inicial
+      updateMinZoom();
+      scale = MIN_ZOOM;
 
       renderMap();
 
@@ -1266,6 +1267,7 @@ function initHome() {
 
   if (zoomInBtn) {
     zoomInBtn.addEventListener('click', () => {
+      updateMinZoom();
       scale = Math.min(MAX_ZOOM, scale + ZOOM_STEP);
       renderMap();
     });
@@ -1273,11 +1275,37 @@ function initHome() {
 
   if (zoomOutBtn) {
     zoomOutBtn.addEventListener('click', () => {
-      if (scale <= MIN_ZOOM) return;
+      updateMinZoom();
+      if (scale <= MIN_ZOOM) {
+        // Já está no fit-to-width
+        return;
+      }
       scale = Math.max(MIN_ZOOM, scale - ZOOM_STEP);
       renderMap();
+
+      // Quando volta ao mínimo (fit), alinha o scroll para o começo.
+      if (canvasWrapper && Math.abs(scale - MIN_ZOOM) < 0.0001) {
+        canvasWrapper.scrollLeft = 0;
+      }
     });
   }
+
+  // Se o container mudar (orientação/resize), recalcula o fit e mantém a visão "largura total"
+  // quando o usuário estiver no mínimo.
+  window.addEventListener('resize', () => {
+    if (!mapLoaded) return;
+    const prevMin = MIN_ZOOM;
+    updateMinZoom();
+    const wasAtMin = Math.abs(scale - prevMin) < 0.0001;
+    if (wasAtMin) {
+      scale = MIN_ZOOM;
+      renderMap();
+      if (canvasWrapper) canvasWrapper.scrollLeft = 0;
+    } else if (scale < MIN_ZOOM) {
+      scale = MIN_ZOOM;
+      renderMap();
+    }
+  });
 
   renderLocations();
   loadMapImage();
