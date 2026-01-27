@@ -1617,6 +1617,37 @@ body.dark-mode .session-status.session-status-next {
   flex: 1 1 auto;
 }
 
+.photos-load-more {
+  grid-column: 1 / -1;
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-primary-border);
+  background: var(--color-primary-soft);
+  color: var(--color-text-main);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.photos-load-more:active {
+  transform: translateY(1px);
+}
+
+/* Photo modal */
+.photo-modal-body {
+  width: 100%;
+}
+
+.photo-modal-image {
+  width: 100%;
+  height: auto;
+  max-height: 70vh;
+  object-fit: contain;
+  display: block;
+  border-radius: var(--radius-md);
+  background: var(--color-bg-alt);
+}
+
 /* Dark mode overrides */
 body.dark-mode .photo-placeholder {
   background: linear-gradient(135deg, #333 25%, #3a3a3a 25%, #3a3a3a 50%, #333 50%, #333 75%, #3a3a3a 75%, #3a3a3a 100%);

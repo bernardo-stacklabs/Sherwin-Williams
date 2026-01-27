@@ -260,7 +260,7 @@ if ('serviceWorker' in navigator) {
 // ----------------------
 
 // Translation Dictionary
-import { i18n } from './locales.js';
+import { i18n } from './locales.js?v=4';
 
 function initHome() {
   const refreshIcons = () => {
@@ -521,7 +521,7 @@ function initHome() {
       },
       {
         id: 304,
-        time: '10h30 – 11h00',
+        time: '10h30 – 10h45',
         titleKey: 'coffeeBreakTitle',
         locationKey: 'locPlenary',
         descriptionKey: 'tueCoffeeBreakDesc',
@@ -529,7 +529,7 @@ function initHome() {
       },
       {
         id: 305,
-        time: '11h30 – 13h00',
+        time: '10h45 – 13h00',
         titleKey: 'tueSalesDirectorsPanelTitle',
         locationKey: 'locSaoPaulo',
         descriptionKey: 'tueSalesDirectorsPanelDesc',
@@ -1551,6 +1551,8 @@ function initHome() {
   // --- PHOTOS LOGIC ---
   const GALLERY_BUCKET = 'gallery';
   const GALLERY_DAYS = ['monday', 'tuesday', 'wednesday'];
+  const PHOTOS_PAGE_SIZE = 6;
+  let photoAutoLoadObserver = null;
 
   let photosData = [
     // Para ativar as fotos reais, basta apontar as URLs
@@ -1579,6 +1581,28 @@ function initHome() {
       .map((segment) => encodeURIComponent(segment))
       .join('/');
     return `${baseUrl}/storage/v1/object/public/${GALLERY_BUCKET}/${encodedPath}`;
+  }
+
+  function buildGalleryThumbUrl(storagePath, { width = 600, height = 600, quality = 60 } = {}) {
+    // Supabase Storage Image Transformations endpoint.
+    // Ref: /storage/v1/render/image/public/<bucket>/<path>?width=..&height=..&resize=cover&quality=..
+    // If the project doesn't have image transformations enabled, the request may 404;
+    // we fall back to the full URL on <img> error.
+    if (!storagePath) return null;
+    const baseUrl = (supabaseConfig && supabaseConfig.url) ? supabaseConfig.url.replace(/\/$/, '') : '';
+    if (!baseUrl) return null;
+    const cleanPath = String(storagePath).replace(/^\//, '');
+    const encodedPath = cleanPath
+      .split('/')
+      .map((segment) => encodeURIComponent(segment))
+      .join('/');
+    const params = new URLSearchParams({
+      width: String(width),
+      height: String(height),
+      resize: 'cover',
+      quality: String(quality),
+    });
+    return `${baseUrl}/storage/v1/render/image/public/${GALLERY_BUCKET}/${encodedPath}?${params.toString()}`;
   }
 
   async function tryLoadPhotosFromStorage() {
@@ -1613,7 +1637,7 @@ function initHome() {
             const name = String(it?.name || '');
             if (!name) return false;
             const lower = name.toLowerCase();
-            return lower.endsWith('.jpg') || lower.endsWith('.jpeg') || lower.endsWith('.png') || lower.endsWith('.webp');
+            return lower.endsWith('.jpg') || lower.endsWith('.jpeg') || lower.endsWith('.png') || lower.endsWith('.webp') || lower.endsWith('.avif');
           });
 
           for (const it of imageItems) {
@@ -1624,6 +1648,7 @@ function initHome() {
               storage_path,
               filename: name,
               url: buildGalleryPublicUrl(storage_path),
+              thumb_url: buildGalleryThumbUrl(storage_path),
             });
           }
 
@@ -1640,6 +1665,7 @@ function initHome() {
         id: nextId++,
         day: p.day,
         url: p.url,
+        thumb_url: p.thumb_url,
         filename: p.filename,
         storage_path: p.storage_path,
         share_url: null,
@@ -1654,18 +1680,112 @@ function initHome() {
     }
   }
 
+  function getPhotosWithUrl(filterDay) {
+    const filtered = filterDay === 'all'
+      ? photosData
+      : photosData.filter((p) => p.day === filterDay);
+    return filtered.filter((p) => !!p.url);
+  }
+
+  function createPhotoCard(photo) {
+    const card = document.createElement('div');
+    card.className = 'photo-card';
+
+    const wrapper = document.createElement('div');
+    wrapper.className = 'photo-image-wrapper';
+
+    const img = document.createElement('img');
+    img.className = 'photo-image';
+    img.loading = 'lazy';
+    img.decoding = 'async';
+    img.setAttribute('fetchpriority', 'low');
+    img.src = photo.thumb_url || photo.url;
+    img.alt = '';
+    img.onerror = () => {
+      // Fallback: if thumb endpoint isn't available, show the original.
+      if (img.dataset.fallbackApplied) return;
+      img.dataset.fallbackApplied = '1';
+      img.src = photo.url;
+    };
+
+    wrapper.appendChild(img);
+    card.appendChild(wrapper);
+    return card;
+  }
+
+  function removeExistingLoadMore(photosGrid) {
+    photosGrid.querySelectorAll('[data-photos-load-more="true"]').forEach((el) => el.remove());
+  }
+
+  function appendLoadMoreButton({ photosGrid, filterDay, nextOffset, total }) {
+    if (!photosGrid) return;
+    removeExistingLoadMore(photosGrid);
+
+    if (nextOffset >= total) return;
+
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'photos-load-more';
+    btn.dataset.photosLoadMore = 'true';
+    btn.dataset.photoDay = filterDay;
+    btn.dataset.offset = String(nextOffset);
+    btn.textContent = t('photosLoadMore') || 'Carregar mais';
+
+    btn.addEventListener('click', () => {
+      const day = btn.dataset.photoDay || 'all';
+      const offset = Number(btn.dataset.offset || 0);
+      const list = getPhotosWithUrl(day);
+
+      const next = list.slice(offset, offset + PHOTOS_PAGE_SIZE);
+      next.forEach((photo) => {
+        // Keep the button as the last element: insert new cards before it.
+        photosGrid.insertBefore(createPhotoCard(photo), btn);
+      });
+
+      const newOffset = offset + next.length;
+      btn.dataset.offset = String(newOffset);
+
+      if (newOffset >= list.length) {
+        btn.remove();
+      }
+    });
+
+    photosGrid.appendChild(btn);
+
+    // Optional: auto-load when the button enters the viewport (infinite scroll feel).
+    // Keeps the button for manual use as well.
+    try {
+      if ('IntersectionObserver' in window) {
+        if (!photoAutoLoadObserver) {
+          photoAutoLoadObserver = new IntersectionObserver((entries) => {
+            for (const entry of entries) {
+              const targetBtn = entry.target;
+              // Trigger only once per visibility cycle (enter viewport -> click -> wait until it leaves).
+              if (!entry.isIntersecting) {
+                targetBtn.dataset.autoLoadedOnce = '0';
+                continue;
+              }
+              if (targetBtn.dataset.autoLoadedOnce === '1') continue;
+              targetBtn.dataset.autoLoadedOnce = '1';
+              targetBtn.click();
+            }
+          }, { root: null, rootMargin: '200px 0px', threshold: 0.01 });
+        }
+        photoAutoLoadObserver.observe(btn);
+      }
+    } catch (_) {
+      // no-op
+    }
+  }
+
   function renderPhotos(filterDay = 'all') {
     const photosGrid = document.querySelector('#photos-grid');
     if (!photosGrid) return;
     photosGrid.innerHTML = '';
 
-    const filtered = filterDay === 'all'
-      ? photosData
-      : photosData.filter(p => p.day === filterDay);
-
     // Se não houver nenhuma foto cadastrada (url preenchida) para o filtro atual,
     // exibir mensagem "em breve" usando o texto de i18n.
-    const photosWithUrl = filtered.filter(p => !!p.url);
+    const photosWithUrl = getPhotosWithUrl(filterDay);
 
     if (photosWithUrl.length === 0) {
       photosGrid.innerHTML = `<p class="empty-state" style="grid-column: 1/-1;">${t('photosPlaceholder')}</p>`;
@@ -1688,18 +1808,18 @@ function initHome() {
     saveHint.appendChild(saveHintText);
     photosGrid.appendChild(saveHint);
 
-    photosWithUrl.forEach(photo => {
-      const card = document.createElement('div');
-      card.className = 'photo-card';
-      // Quando houver URL, usamos a foto real como background do card
-      card.innerHTML = `
-        <div class="photo-image-wrapper">
-          <img src="${photo.url}" alt="Foto ${photo.id}" class="photo-image" loading="lazy" />
-        </div>
-      `;
-
-      photosGrid.appendChild(card);
+    const initial = photosWithUrl.slice(0, PHOTOS_PAGE_SIZE);
+    initial.forEach((photo) => {
+      photosGrid.appendChild(createPhotoCard(photo));
     });
+
+    appendLoadMoreButton({
+      photosGrid,
+      filterDay,
+      nextOffset: initial.length,
+      total: photosWithUrl.length,
+    });
+
     refreshIcons();
   }
 

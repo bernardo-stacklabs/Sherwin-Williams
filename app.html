@@ -23,7 +23,49 @@
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
   </script>
 
-  <link rel="stylesheet" href="./styles.css?v=2" />
+  <script>
+    (function () {
+      const BUILD = '4';
+      try {
+        const url = new URL(window.location.href);
+        const force = url.searchParams.get('forceUpdate') === '1';
+        const key = 'app_build';
+        const prev = localStorage.getItem(key);
+
+        if (force || prev !== BUILD) {
+          localStorage.setItem(key, BUILD);
+          const tasks = [];
+
+          if ('caches' in window) {
+            tasks.push(
+              caches.keys().then((keys) => Promise.all(keys.map((k) => caches.delete(k))))
+            );
+          }
+
+          if ('serviceWorker' in navigator) {
+            tasks.push(
+              navigator.serviceWorker.getRegistrations().then((regs) => Promise.all(regs.map((r) => r.unregister())))
+            );
+          }
+
+          Promise.allSettled(tasks).finally(() => {
+            url.searchParams.delete('forceUpdate');
+            url.searchParams.set('v', BUILD);
+            url.searchParams.set('reload', String(Date.now()));
+            window.location.replace(url.toString());
+          });
+          return;
+        }
+
+        if (url.searchParams.get('v') !== BUILD) {
+          url.searchParams.set('v', BUILD);
+          window.location.replace(url.toString());
+        }
+      } catch (e) { }
+    })();
+  </script>
+
+  <link rel="stylesheet" href="./styles.css?v=4" />
 </head>
 
 <body class="home-page">
@@ -218,7 +260,7 @@
   </main>
 
   <script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-  <script src="./app.js?v=2" type="module"></script>
+  <script src="./app.js?v=4" type="module"></script>
 </body>
 
 </html>

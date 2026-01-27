@@ -1,15 +1,15 @@
-const CACHE_NAME = 'sw-kickoff-2026-v33';
+const CACHE_NAME = 'sw-kickoff-2026-v35';
 
 // Minimal app-shell cache for true PWA behavior (offline + fast reload)
-// Note: the app uses cache-busting querystrings (?v=2). We handle that in fetch
-// with ignoreSearch for same-origin static assets.
+// Note: the app uses cache-busting querystrings (?v=...). We keep the query
+// string as part of the cache key so new versions are fetched immediately.
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
   './app.html',
-  './styles.css',
-  './app.js',
-  './locales.js',
+  './styles.css?v=4',
+  './app.js?v=4',
+  './locales.js?v=4',
   './manifest.webmanifest',
   './icons/icon-192.svg',
   './icons/icon-512.svg',
@@ -81,18 +81,12 @@ self.addEventListener('fetch', (event) => {
       (async () => {
         const cache = await caches.open(CACHE_NAME);
 
-        // Normalize cache key to ignore querystrings (e.g. ?v=2),
-        // but still allow the network request to update the cached entry.
-        const urlNoSearch = new URL(request.url);
-        urlNoSearch.search = '';
-        const cacheKey = new Request(urlNoSearch.toString(), { method: 'GET' });
-
-        const cachedResponse = await cache.match(cacheKey);
+        const cachedResponse = await cache.match(request);
 
         const networkPromise = fetch(request)
           .then((response) => {
             if (response && response.ok && response.type === 'basic') {
-              cache.put(cacheKey, response.clone()).catch(() => { });
+              cache.put(request, response.clone()).catch(() => { });
             }
             return response;
           })
@@ -105,7 +99,7 @@ self.addEventListener('fetch', (event) => {
         }
 
         const networkResponse = await networkPromise;
-        return networkResponse || (await cache.match(cacheKey));
+        return networkResponse || (await cache.match(request));
       })()
     );
     return;
