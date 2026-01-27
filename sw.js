@@ -1,4 +1,5 @@
-const CACHE_NAME = 'sw-kickoff-2026-v35';
+const CACHE_NAME = 'sw-kickoff-2026-v36';
+const RUNTIME_IMAGE_CACHE = 'sw-kickoff-2026-images-v1';
 
 // Minimal app-shell cache for true PWA behavior (offline + fast reload)
 // Note: the app uses cache-busting querystrings (?v=...). We keep the query
@@ -50,6 +51,8 @@ self.addEventListener('fetch', (event) => {
 
   const url = new URL(request.url);
   const isSameOrigin = url.origin === self.location.origin;
+  const isSupabaseStorage = (url.hostname.endsWith('.supabase.co') || url.hostname.endsWith('.supabase.in'))
+    && url.pathname.startsWith('/storage/v1/');
 
   // Navigation requests (page loads) -> network first, fallback to cached shell
   if (request.mode === 'navigate') {
@@ -93,6 +96,34 @@ self.addEventListener('fetch', (event) => {
           .catch(() => null);
 
         // Stale-while-revalidate: return cache immediately, update in background.
+        if (cachedResponse) {
+          event.waitUntil(networkPromise);
+          return cachedResponse;
+        }
+
+        const networkResponse = await networkPromise;
+        return networkResponse || (await cache.match(request));
+      })()
+    );
+    return;
+  }
+
+  // Supabase Storage images (cross-origin) -> cache (stale-while-revalidate)
+  if (isSupabaseStorage) {
+    event.respondWith(
+      (async () => {
+        const cache = await caches.open(RUNTIME_IMAGE_CACHE);
+        const cachedResponse = await cache.match(request);
+
+        const networkPromise = fetch(request)
+          .then((response) => {
+            if (response && response.ok) {
+              cache.put(request, response.clone()).catch(() => { });
+            }
+            return response;
+          })
+          .catch(() => null);
+
         if (cachedResponse) {
           event.waitUntil(networkPromise);
           return cachedResponse;

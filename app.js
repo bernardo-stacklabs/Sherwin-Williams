@@ -451,7 +451,6 @@ function initHome() {
 
   // Dados da home (Keys map to i18n)
   const importantNotices = [
-    { id: 1, icon: 'clock', titleKey: 'noticeCheckinTitle', descKey: 'noticeCheckinDesc' },
     { id: 2, icon: 'camera', titleKey: 'noticeWelcomeDrinkTitle', descKey: 'noticeWelcomeDrinkDesc' },
     { id: 3, icon: 'utensils', titleKey: 'noticeCelebratoryDinnerTitle', descKey: 'noticeCelebratoryDinnerDesc' },
   ];
@@ -1554,6 +1553,11 @@ function initHome() {
   const PHOTOS_PAGE_SIZE = 6;
   let photoAutoLoadObserver = null;
 
+  const PHOTOS_CACHE_KEY = 'photos_gallery_index_v1';
+  const PHOTOS_CACHE_TTL_MS = 5 * 60 * 1000; // 5 min: fast repeat opens, still updates frequently.
+  let photosInitialized = false;
+  let photosLoadInFlight = null;
+
   let photosData = [
     // Para ativar as fotos reais, basta apontar as URLs
     // para arquivos estáticos em ./assets/photos
@@ -1605,6 +1609,53 @@ function initHome() {
     return `${baseUrl}/storage/v1/render/image/public/${GALLERY_BUCKET}/${encodedPath}?${params.toString()}`;
   }
 
+  function getPhotosCache() {
+    try {
+      const raw = localStorage.getItem(PHOTOS_CACHE_KEY);
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      if (!parsed || typeof parsed !== 'object') return null;
+      if (!Array.isArray(parsed.data)) return null;
+      if (typeof parsed.savedAt !== 'number') return null;
+      if ((Date.now() - parsed.savedAt) > PHOTOS_CACHE_TTL_MS) return null;
+      const sanitized = parsed.data
+        .filter((p) => p && typeof p === 'object')
+        .map((p) => ({
+          id: Number(p.id) || 0,
+          day: p.day,
+          url: p.url,
+          thumb_url: p.thumb_url,
+          filename: p.filename,
+          storage_path: p.storage_path,
+          share_url: p.share_url || null,
+          og_url: p.og_url || null,
+        }))
+        .filter((p) => !!p.url && !!p.day);
+      return sanitized.length ? sanitized : null;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  function setPhotosCache(list) {
+    try {
+      if (!Array.isArray(list) || list.length === 0) return;
+      localStorage.setItem(PHOTOS_CACHE_KEY, JSON.stringify({
+        savedAt: Date.now(),
+        data: list,
+      }));
+    } catch (_) {
+      // no-op (quota / private mode)
+    }
+  }
+
+  function getPhotosSignature(list) {
+    if (!Array.isArray(list) || list.length === 0) return '0';
+    const first = list[0]?.storage_path || list[0]?.url || '';
+    const last = list[list.length - 1]?.storage_path || list[list.length - 1]?.url || '';
+    return `${list.length}:${first}:${last}`;
+  }
+
   async function tryLoadPhotosFromStorage() {
     const photosGrid = document.querySelector('#photos-grid');
     if (!photosGrid) return false;
@@ -1614,9 +1665,8 @@ function initHome() {
       const storage = client.storage.from(GALLERY_BUCKET);
 
       const pageSize = 100;
-      const allPhotos = [];
-
-      for (const day of GALLERY_DAYS) {
+      const listDay = async (day) => {
+        const dayPhotos = [];
         let offset = 0;
         while (true) {
           const { data, error } = await storage.list(day, {
@@ -1627,12 +1677,11 @@ function initHome() {
 
           if (error) {
             console.error(`Error listing storage folder ${day}:`, error);
-            return false;
+            return null;
           }
 
           const items = Array.isArray(data) ? data : [];
 
-          // Filter to common image types; ignore placeholder/folders.
           const imageItems = items.filter((it) => {
             const name = String(it?.name || '');
             if (!name) return false;
@@ -1643,7 +1692,7 @@ function initHome() {
           for (const it of imageItems) {
             const name = String(it.name);
             const storage_path = `${day}/${name}`;
-            allPhotos.push({
+            dayPhotos.push({
               day,
               storage_path,
               filename: name,
@@ -1654,14 +1703,22 @@ function initHome() {
 
           if (items.length < pageSize) break;
           offset += pageSize;
+
+          // Yield to the UI between pages.
+          await new Promise((r) => setTimeout(r, 0));
         }
-      }
+        return dayPhotos;
+      };
+
+      const perDay = await Promise.all(GALLERY_DAYS.map((d) => listDay(d)));
+      if (perDay.some((d) => d === null)) return false;
+      const allPhotos = perDay.flat();
 
       if (allPhotos.length === 0) return false;
 
       // Assign numeric IDs for existing download/share code paths.
       let nextId = 1;
-      photosData = allPhotos.map((p) => ({
+      const nextPhotosData = allPhotos.map((p) => ({
         id: nextId++,
         day: p.day,
         url: p.url,
@@ -1672,7 +1729,14 @@ function initHome() {
         og_url: null,
       }));
 
-      renderPhotos(document.querySelector('.photo-tabs .day-pill.is-active')?.dataset?.photoDay || 'all');
+      const prevSig = getPhotosSignature(getPhotosWithUrl('all'));
+      const nextSig = getPhotosSignature(nextPhotosData);
+      photosData = nextPhotosData;
+      setPhotosCache(nextPhotosData);
+
+      if (prevSig !== nextSig) {
+        renderPhotos(document.querySelector('.photo-tabs .day-pill.is-active')?.dataset?.photoDay || 'all');
+      }
       return true;
     } catch (err) {
       console.error('Photos Storage Load Error:', err);
@@ -1699,8 +1763,14 @@ function initHome() {
     img.loading = 'lazy';
     img.decoding = 'async';
     img.setAttribute('fetchpriority', 'low');
+    img.setAttribute('draggable', 'false');
+    img.dataset.loaded = '0';
     img.src = photo.thumb_url || photo.url;
     img.alt = '';
+    img.addEventListener('load', () => {
+      img.dataset.loaded = '1';
+      img.classList.add('is-loaded');
+    }, { once: true });
     img.onerror = () => {
       // Fallback: if thumb endpoint isn't available, show the original.
       if (img.dataset.fallbackApplied) return;
@@ -1711,6 +1781,25 @@ function initHome() {
     wrapper.appendChild(img);
     card.appendChild(wrapper);
     return card;
+  }
+
+  function ensurePhotosInitialized() {
+    if (photosInitialized) return;
+    photosInitialized = true;
+
+    // Render fast from cache (if any), then refresh from storage in the background.
+    const activeDay = document.querySelector('.photo-tabs .day-pill.is-active')?.dataset?.photoDay || 'all';
+    const cached = getPhotosCache();
+    if (cached && cached.length) {
+      photosData = cached;
+    }
+    renderPhotos(activeDay);
+
+    if (!photosLoadInFlight) {
+      photosLoadInFlight = tryLoadPhotosFromStorage().finally(() => {
+        photosLoadInFlight = null;
+      });
+    }
   }
 
   function removeExistingLoadMore(photosGrid) {
@@ -1825,15 +1914,9 @@ function initHome() {
 
   const photoTabs = document.querySelectorAll('.photo-tabs .day-pill');
   if (photoTabs.length > 0) {
-    // Initial Render
-    renderPhotos('all');
-
-    // Storage-only mode: photos appear automatically when uploaded into the correct day folder.
-    // If listing fails (policy / permissions), the UI will keep showing the placeholder.
-    tryLoadPhotosFromStorage();
-
     photoTabs.forEach(tab => {
       tab.addEventListener('click', () => {
+        ensurePhotosInitialized();
         // Toggle Active
         photoTabs.forEach(t => {
           t.classList.remove('is-active');
@@ -1888,6 +1971,10 @@ function initHome() {
         const view = section.dataset.view;
         section.classList.toggle('is-hidden', view !== target);
       });
+
+      if (target === 'fotos') {
+        ensurePhotosInitialized();
+      }
 
       // Se mudou para o mapa, recalcula o zoom para preencher a largura
       // Precisamos de um pequeno delay ou requestAnimationFrame para que o "display: flex" tenha efeito no DOM
