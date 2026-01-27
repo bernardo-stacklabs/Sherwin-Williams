@@ -199,12 +199,18 @@
           </button>
         </header>
         <div class="modal-body">
-          <div class="modal-info">
-            <p id="modal-time" class="modal-time"></p>
-            <p id="modal-location" class="modal-location"></p>
-          </div>
           <p id="modal-description" class="modal-description"></p>
           <p id="modal-participants" class="modal-participants"></p>
+          <div class="modal-info">
+            <div id="modal-time" class="modal-meta-row modal-time">
+              <span class="modal-meta-icon" aria-hidden="true"><i data-lucide="clock"></i></span>
+              <span id="modal-time-text"></span>
+            </div>
+            <div id="modal-location" class="modal-meta-row modal-location">
+              <span class="modal-meta-icon" aria-hidden="true"><i data-lucide="map-pin"></i></span>
+              <span id="modal-location-text"></span>
+            </div>
+          </div>
         </div>
         <div id="modal-actions" class="modal-actions"></div>
       </div>

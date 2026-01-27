@@ -451,8 +451,9 @@ function initHome() {
 
   // Dados da home (Keys map to i18n)
   const importantNotices = [
-    { id: 1, icon: 'user-check', titleKey: 'noticeCheckinTitle', descKey: 'noticeCheckinDesc' },
-    { id: 2, icon: 'glass-water', titleKey: 'noticeWelcomeDrinkTitle', descKey: 'noticeWelcomeDrinkDesc' },
+    { id: 1, icon: 'clock', titleKey: 'noticeCheckinTitle', descKey: 'noticeCheckinDesc' },
+    { id: 2, icon: 'camera', titleKey: 'noticeWelcomeDrinkTitle', descKey: 'noticeWelcomeDrinkDesc' },
+    { id: 3, icon: 'utensils', titleKey: 'noticeCelebratoryDinnerTitle', descKey: 'noticeCelebratoryDinnerDesc' },
   ];
 
   const agendaByDay = {
@@ -833,7 +834,9 @@ function initHome() {
   const modal = document.querySelector('#app-modal');
   const modalTitle = document.querySelector('#modal-title');
   const modalTime = document.querySelector('#modal-time');
+  const modalTimeText = document.querySelector('#modal-time-text');
   const modalLoc = document.querySelector('#modal-location');
+  const modalLocText = document.querySelector('#modal-location-text');
   const modalDesc = document.querySelector('#modal-description');
   const modalParticipants = document.querySelector('#modal-participants');
   const modalActions = document.querySelector('#modal-actions');
@@ -867,15 +870,46 @@ function initHome() {
 
     // Reset fields
     modalTitle.textContent = data.title || '';
-    modalTime.textContent = data.time || '';
-    modalLoc.textContent = data.location ? `${t('labelLocation')}: ${data.location}` : '';
+    if (modalTimeText) modalTimeText.textContent = data.time || '';
+    if (modalLocText) {
+      modalLocText.textContent = '';
+      if (data.location) {
+        const labelSpan = document.createElement('span');
+        labelSpan.className = 'modal-meta-label';
+        labelSpan.textContent = `${t('labelLocation')}:`;
+
+        const valueSpan = document.createElement('span');
+        valueSpan.className = 'modal-meta-value';
+        valueSpan.textContent = String(data.location);
+
+        modalLocText.appendChild(labelSpan);
+        modalLocText.appendChild(document.createTextNode(' '));
+        modalLocText.appendChild(valueSpan);
+      }
+    }
     modalDesc.textContent = data.description || '';
     if (modalParticipants) {
-      modalParticipants.textContent = data.participants ? `${t('labelParticipants')}: ${data.participants}` : '';
+      modalParticipants.textContent = '';
+      if (data.participants) {
+        const labelSpan = document.createElement('span');
+        labelSpan.className = 'modal-meta-label';
+        labelSpan.textContent = `${t('labelParticipants')}:`;
+
+        const valueSpan = document.createElement('span');
+        valueSpan.className = 'modal-meta-value';
+        valueSpan.textContent = String(data.participants);
+
+        modalParticipants.appendChild(labelSpan);
+        modalParticipants.appendChild(document.createTextNode(' '));
+        modalParticipants.appendChild(valueSpan);
+      }
       if (!data.participants) {
         modalParticipants.style.display = 'none';
       }
     }
+
+    if (modalTime && !data.time) modalTime.style.display = 'none';
+    if (modalLoc && !data.location) modalLoc.style.display = 'none';
     modalActions.innerHTML = '';
 
     // Action Buttons
@@ -1038,8 +1072,8 @@ function initHome() {
     if (!noticesContainer) return;
     noticesContainer.innerHTML = '';
 
-    // Limit to 2 items
-    importantNotices.slice(0, 2).forEach((notice, index) => {
+    // Limit to 3 items
+    importantNotices.slice(0, 3).forEach((notice, index) => {
       const article = document.createElement('article');
       article.className = 'announcement-card';
       // article.style.cursor = 'pointer'; // Removed clickable indication indicating

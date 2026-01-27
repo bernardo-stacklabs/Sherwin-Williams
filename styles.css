@@ -1139,13 +1139,15 @@ body.dark-mode .session-status.session-status-next {
   max-width: 480px;
   /* Match app card width */
   border-radius: 24px 24px 0 0;
-  padding: 24px;
+  padding: 20px 20px 16px;
   box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.1);
   transform: translateY(100%);
   transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
+  max-height: min(78vh, 640px);
+  overflow: hidden;
 }
 
 .app-modal[open] .modal-content {
@@ -1155,12 +1157,13 @@ body.dark-mode .session-status.session-status-next {
 .modal-header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
+  gap: 12px;
 }
 
 .modal-title {
   margin: 0;
-  font-size: 1.25rem;
+  font-size: 1.2rem;
   font-weight: 700;
   line-height: 1.3;
   color: var(--color-text-main);
@@ -1168,13 +1171,27 @@ body.dark-mode .session-status.session-status-next {
 }
 
 .modal-close {
-  background: transparent;
-  border: none;
-  color: #888;
+  width: 36px;
+  height: 36px;
+  background: rgba(0, 0, 0, 0.04);
+  border: 1px solid var(--color-nav-border);
+  color: var(--color-text-muted);
   cursor: pointer;
-  padding: 4px;
-  border-radius: 10px;
+  padding: 0;
+  border-radius: 999px;
   -webkit-tap-highlight-color: transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-close:hover {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.modal-close svg {
+  width: 18px;
+  height: 18px;
 }
 
 .modal-close:focus {
@@ -1191,18 +1208,70 @@ body.dark-mode .session-status.session-status-next {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  overflow: auto;
+  padding-bottom: 4px;
+}
+
+.modal-info {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.modal-meta-row {
+  display: grid;
+  grid-template-columns: 18px 1fr;
+  align-items: center;
+  column-gap: 10px;
+  color: var(--color-primary);
+  font-weight: 600;
+  line-height: 1.2;
+  padding: 2px 0;
+  border-radius: 0;
+  background: transparent;
+  border: none;
+}
+
+.modal-meta-icon {
+  width: 18px;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.95;
+}
+
+.modal-meta-icon svg {
+  width: 16px;
+  height: 16px;
+  display: block;
+  stroke: currentColor;
+  stroke-width: 2;
+}
+
+.modal-meta-row > :not(.modal-meta-icon) {
+  align-self: center;
+  line-height: 1;
+}
+
+.modal-meta-label {
+  font-weight: 600;
+  opacity: 0.9;
+}
+
+.modal-meta-value {
+  font-weight: 600;
 }
 
 .modal-time,
 .modal-location {
   margin: 0;
-  font-size: 0.9rem;
-  color: var(--color-text-muted);
-  font-weight: 500;
+  font-size: 0.95rem;
 }
 
 .modal-description {
-  margin-top: 8px;
+  margin-top: 0;
   font-size: 0.95rem;
   line-height: 1.5;
   color: var(--color-text-main);
@@ -1219,27 +1288,43 @@ body.dark-mode .session-status.session-status-next {
 .modal-actions {
   display: flex;
   gap: 12px;
-  margin-top: 8px;
+  margin-top: 6px;
+  position: sticky;
+  bottom: 0;
+  padding-top: 12px;
+  padding-bottom: 4px;
+  background: linear-gradient(to top, var(--color-bg-card) 70%, rgba(0, 0, 0, 0));
 }
 
 .action-btn {
   flex: 1;
-  padding: 12px;
-  border-radius: 12px;
+  padding: 12px 14px;
+  border-radius: 14px;
   border: none;
   font-weight: 600;
-  font-size: 0.95rem;
+  font-size: 0.98rem;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
   transition: all 0.2s;
+  min-height: 50px;
+}
+
+.action-btn svg {
+  width: 18px;
+  height: 18px;
 }
 
 .btn-primary {
-  background: var(--color-primary);
+  background: linear-gradient(90deg, var(--color-primary) 0%, #f0a500 100%);
   color: #2b2010;
+  box-shadow: 0 10px 24px rgba(240, 165, 0, 0.25);
+}
+
+.btn-primary:active {
+  transform: translateY(1px);
 }
 
 .btn-secondary {
@@ -1566,6 +1651,20 @@ body.dark-mode .location-icon {
 /* Modal Dark Override */
 body.dark-mode .modal-content {
   box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.6);
+}
+
+body.dark-mode .modal-close {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.85);
+}
+
+body.dark-mode .modal-close:hover {
+  background: rgba(255, 255, 255, 0.09);
+}
+
+body.dark-mode .modal-actions {
+  background: linear-gradient(to top, var(--color-bg-card) 70%, rgba(18, 18, 18, 0));
 }
 
 body.dark-mode .zoom-indicator {
