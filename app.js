@@ -260,7 +260,7 @@ if ('serviceWorker' in navigator) {
 // ----------------------
 
 // Translation Dictionary
-import { i18n } from './locales.js?v=4';
+import { i18n } from './locales.js?v=5';
 
 function initHome() {
   const refreshIcons = () => {
@@ -451,8 +451,11 @@ function initHome() {
 
   // Dados da home (Keys map to i18n)
   const importantNotices = [
-    { id: 2, icon: 'camera', titleKey: 'noticeWelcomeDrinkTitle', descKey: 'noticeWelcomeDrinkDesc' },
-    { id: 3, icon: 'utensils', titleKey: 'noticeCelebratoryDinnerTitle', descKey: 'noticeCelebratoryDinnerDesc' },
+    { id: 1, icon: 'lightbulb', titleKey: 'noticeInnovationTitle', descKey: 'noticeInnovationDesc' },
+    { id: 2, icon: 'gamepad', titleKey: 'noticeGamificationTitle', descKey: 'noticeGamificationDesc' },
+    { id: 3, icon: 'log-out', titleKey: 'noticeCheckoutTitle', descKey: 'noticeCheckoutDesc' },
+    { id: 4, icon: 'camera', titleKey: 'noticeReliveTitle', descKey: 'noticeReliveDesc' },
+    { id: 5, icon: 'share-2', titleKey: 'noticeShareTitle', descKey: 'noticeShareDesc' },
   ];
 
   const agendaByDay = {
@@ -1071,8 +1074,7 @@ function initHome() {
     if (!noticesContainer) return;
     noticesContainer.innerHTML = '';
 
-    // Limit to 3 items
-    importantNotices.slice(0, 3).forEach((notice, index) => {
+    importantNotices.forEach((notice, index) => {
       const article = document.createElement('article');
       article.className = 'announcement-card';
       // article.style.cursor = 'pointer'; // Removed clickable indication indicating

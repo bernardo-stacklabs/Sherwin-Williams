@@ -1,4 +1,4 @@
-const CACHE_NAME = 'sw-kickoff-2026-v36';
+const CACHE_NAME = 'sw-kickoff-2026-v37';
 const RUNTIME_IMAGE_CACHE = 'sw-kickoff-2026-images-v1';
 
 // Minimal app-shell cache for true PWA behavior (offline + fast reload)
@@ -8,9 +8,9 @@ const ASSETS_TO_CACHE = [
   './',
   './index.html',
   './app.html',
-  './styles.css?v=4',
-  './app.js?v=4',
-  './locales.js?v=4',
+  './styles.css?v=5',
+  './app.js?v=5',
+  './locales.js?v=5',
   './manifest.webmanifest',
   './icons/icon-192.svg',
   './icons/icon-512.svg',
